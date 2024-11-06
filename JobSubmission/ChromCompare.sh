@@ -11,6 +11,14 @@
 #SBATCH --error=Compare%j.err
 #SBATCH --job-name=Compare
 
+check_config_file() {
+  config_file_location=$1
+  python \
+    "${PYTHON_DIRECTORY}/check_config_file.py" \
+    "${config_file_location}"
+}
+
+
 source_config_file() {
   config_file_location=$1
   source "${config_file_location}" | \
@@ -21,7 +29,7 @@ source_config_file() {
 
 main() {
   config_file_location=$1
-  check_config_file
+  check_config_file "${config_file_location}"
   source_config_file "${config_file_location}"
 
   mkdir "${OUTPUT_DIRECTORY}/similarity_scores"
