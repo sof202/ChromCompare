@@ -11,6 +11,22 @@
 #SBATCH --error=ChromCompare_%j.err
 #SBATCH --job-name=ChromCompare
 
+usage() {
+cat << MESSAGE
+============================================================================
+$(basename "$0")
+============================================================================
+Purpose: Using emission and state assignment files from two models generated
+from ChromHMM's LearnModel command, generates a matrix of similarity scores
+between the states of each model.
+Arguments: \$1 -> full/path/to/config/file
+Author: Sam Fletcher
+Contact: s.o.fletcher@exeter.ac.uk
+============================================================================
+MESSAGE
+  exit 0
+}
+
 check_config_file() {
   config_file_location=$1
   python \
@@ -126,5 +142,5 @@ main() {
   fi
 }
 
-if [[ $# -ne 1 ]]; then exit 1; fi
+if [[ $# -ne 1 ]]; then usage; fi
 main "$1"
