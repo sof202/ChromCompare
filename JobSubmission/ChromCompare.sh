@@ -71,14 +71,14 @@ run_spatial_similarity() {
 }
 
 combine_similarity_scores() {
-  emission_similarities_files=$1
-  state_assignments_similarities_files=$2
+  emission_similarities_file=$1
+  state_assignments_similarities_file=$2
   output_file=$3
   
   Rscript \
     "${RSCRIPT_DIRECTORY}/combine_similiarity_scores.R" \
-    "${emission_similarities_files}" \
-    "${state_assignments_similarities_files}" \
+    "${emission_similarities_file}" \
+    "${state_assignments_similarities_file}" \
     "${output_file}"
 }
 
