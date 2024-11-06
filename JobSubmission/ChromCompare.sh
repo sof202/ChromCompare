@@ -57,7 +57,7 @@ run_spatial_similarity() {
   output_file=$5
 
   shift 5
-  margins=$*
+  margins=("$@")
   for margin in "${margins[@]}"; do
     Rscript \
       "${RSCRIPT_DIRECTORY}/spatial_similarity.R" \
