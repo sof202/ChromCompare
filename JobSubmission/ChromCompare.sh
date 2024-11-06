@@ -7,9 +7,9 @@
 #SBATCH --ntasks-per-node=16
 #SBATCH --mem=8G
 #SBATCH --mail-type=END 
-#SBATCH --output=Compare%j.log
-#SBATCH --error=Compare%j.err
-#SBATCH --job-name=Compare
+#SBATCH --output=ChromCompare_%j.log
+#SBATCH --error=ChromCompare_%j.err
+#SBATCH --job-name=ChromCompare
 
 check_config_file() {
   config_file_location=$1
@@ -27,10 +27,22 @@ source_config_file() {
 }
 
 
+move_log_files() {
+  log_directory="${OUTPUT_DIRECTORY}/LogFiles/${USER}"
+  timestamp=$(date +%d-%h~%H-%M)
+  mkdir -p "${log_directory}"
+  mv "ChromCompare_${SLURM_JOB_ID}.log" \
+    "${log_directory}/${timestamp}_${SLURM_JOB_ID}_ChromCompare.log"
+  mv "ChromCompare_${SLURM_JOB_ID}.err" \
+    "${log_directory}/${timestamp}_${SLURM_JOB_ID}_ChromCompare.err"
+}
+
+
 main() {
   config_file_location=$1
   check_config_file "${config_file_location}"
   source_config_file "${config_file_location}"
+  move_log_files
 
   mkdir "${OUTPUT_DIRECTORY}/similarity_scores"
 
