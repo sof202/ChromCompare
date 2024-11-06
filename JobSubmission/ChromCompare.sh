@@ -38,6 +38,17 @@ move_log_files() {
 }
 
 
+run_emission_similarity() {
+  emission_file_one=$1
+  emission_file_two=$2
+  output_file=$3
+  Rscript \
+    "${RSCRIPT_DIRECTORY}/emission_similarity.R" \
+    "${emission_file_one}" \
+    "${emission_file_two}" \
+    "${output_file}"
+}
+
 main() {
   config_file_location=$1
   check_config_file "${config_file_location}"
