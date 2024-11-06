@@ -70,6 +70,18 @@ run_spatial_similarity() {
   done
 }
 
+combine_similarity_scores() {
+  emission_similarities_files=$1
+  state_assignments_similarities_files=$2
+  output_file=$3
+  
+  Rscript \
+    "${RSCRIPT_DIRECTORY}/combine_similiarity_scores.R" \
+    "${emission_similarities_files}" \
+    "${state_assignments_similarities_files}" \
+    "${output_file}"
+}
+
 main() {
   config_file_location=$1
   check_config_file "${config_file_location}"
