@@ -11,6 +11,13 @@
 #SBATCH --error=Compare%j.err
 #SBATCH --job-name=Compare
 
+source_config_file() {
+  config_file_location=$1
+  source "${config_file_location}" | \
+    { >&2 echo "Config file does not exist in specified location ($1)."
+      exit 1; }
+}
+
 
 main() {
   config_file_location=$1
