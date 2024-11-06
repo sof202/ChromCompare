@@ -82,6 +82,13 @@ combine_similarity_scores() {
     "${output_file}"
 }
 
+clean_up() {
+  printf "Removing files:"
+  printf "%s\n" "$@"
+  printf "To stop this behaviour, set \$DEBUG_MODE to 1."
+  rm "$@"
+}
+
 main() {
   config_file_location=$1
   check_config_file "${config_file_location}"
@@ -112,7 +119,11 @@ main() {
     "${state_assignments_similarity_file}" \
     "${combined_similarity_score_file}"
 
-  if ! "${DEBUG_MODE}"; then clean_up; fi
+  if [[ "${DEBUG_MODE}" -eq 1 ]]; then
+    clean_up \
+      "${emission_similarities_file}" \
+      "${state_assignments_similarity_file}"
+  fi
 }
 
 if [[ $# -ne 1 ]]; then exit 1; fi
