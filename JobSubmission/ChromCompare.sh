@@ -49,6 +49,27 @@ run_emission_similarity() {
     "${output_file}"
 }
 
+run_spatial_similarity() {
+  state_assignment_file_one=$1
+  state_assignment_file_two=$2
+  emission_file_one=$3
+  emission_file_two=$4
+  output_file=$5
+
+  shift 5
+  margins=$*
+  for margin in "${margins[@]}"; do
+    Rscript \
+      "${RSCRIPT_DIRECTORY}/spatial_similarity.R" \
+      "${state_assignment_file_one}" \
+      "${state_assignment_file_two}" \
+      "${emission_file_one}" \
+      "${emission_file_two}" \
+      "${margin}" \
+      "${output_file}"
+  done
+}
+
 main() {
   config_file_location=$1
   check_config_file "${config_file_location}"
@@ -68,6 +89,8 @@ main() {
   run_spatial_similarity \
     "${MODEL_ONE_STATE_ASSIGNMENTS_FILE}" \
     "${MODEL_ONE_STATE_ASSIGNMENTS_FILE}" \
+    "${MODEL_ONE_EMISSIONS_FILE}" \
+    "${MODEL_TWO_EMISSIONS_FILE}" \
     "${state_assignments_similarity_file}" \
     "${margins[@]}"
 
