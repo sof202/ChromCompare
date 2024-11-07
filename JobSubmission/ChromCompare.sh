@@ -107,18 +107,29 @@ run_spatial_similarity() {
   state_assignment_file_one=$1
   state_assignment_file_two=$2
   bin_size=$3
-  output_file=$4
+  output_file_prefix=$4
 
 
   shift 5
   margins=("$@")
   for margin in "${margins[@]}"; do
     Rscript \
-      "${RSCRIPT_DIRECTORY}/spatial_similarity.R" \
+      "${RSCRIPT_DIRECTORY}/add_margins.R" \
       "${state_assignment_file_one}" \
+      "${margin}" \
+      "${PROCESSING_DIRECTORY}/state_assignments_one_margin_${margin}.bed"
+
+    Rscript \
+      "${RSCRIPT_DIRECTORY}/add_margins.R" \
       "${state_assignment_file_two}" \
       "${margin}" \
-      "${output_file}"
+      "${PROCESSING_DIRECTORY}/state_assignments_two_margin_${margin}.bed"
+
+    Rscript \
+      "${RSCRIPT_DIRECTORY}/spatial_similarity.R" \
+      "${PROCESSING_DIRECTORY}/state_assignments_one_margin_${margin}.bed" \
+      "${PROCESSING_DIRECTORY}/state_assignments_two_margin_${margin}.bed" \
+      "${output_file_prefix}_${margin}.txt"
   done
 }
 
@@ -171,25 +182,22 @@ main() {
     "${PROCESSING_DIRECTORY}/state_assignments_model_two.bed"
 
   margins=(0 "${BIN_SIZE}" $((BIN_SIZE * 10)))
-  state_assignments_similarity_file="${PROCESSING_DIRECTORY}/similarity_scores/state_assignment_similarity.txt"
+  state_assignments_similarity_file_prefix="${PROCESSING_DIRECTORY}/similarity_scores/state_assignment_similarity"
   run_spatial_similarity \
     "${MODEL_ONE_STATE_ASSIGNMENTS_FILE}" \
     "${MODEL_TWO_STATE_ASSIGNMENTS_FILE}" \
     "${BIN_SIZE}" \
-    "${CHROMOSOME_SIZES_FILE}" \
-    "${state_assignments_similarity_file}" \
+    "${state_assignments_similarity_file_prefix}" \
     "${margins[@]}"
 
   combined_similarity_score_file="${OUTPUT_DIRECTORY}/similarity_scores.txt"
   combine_similarity_scores \
     "${emission_similarities_file}" \
-    "${state_assignments_similarity_file}" \
     "${combined_similarity_score_file}"
 
   if [[ "${DEBUG_MODE}" -eq 1 ]]; then
     clean_up \
-      "${emission_similarities_file}" \
-      "${state_assignments_similarity_file}"
+      "${emission_similarities_file}"
   fi
 }
 
