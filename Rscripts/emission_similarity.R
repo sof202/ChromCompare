@@ -32,7 +32,7 @@ save_file <- function(matrix, file_path) {
     matrix,
     file = file_path,
     quote = FALSE,
-    row.names = TRUE,
+    row.names = FALSE,
     col.names = TRUE,
     sep = ","
   )
