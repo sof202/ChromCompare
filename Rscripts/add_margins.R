@@ -19,22 +19,21 @@ correct_invalid_bounds <- function(state_assignments, chromosome_sizes) {
   # When adding margins, some extremal intervals will end up being invalid.
   # For example, the intervals at the start of each chromosome will now span
   # into the negatives. We need to correct for such bounds.
+  state_assignments <- dplyr::mutate(
+    state_assignments,
+    start = ifelse(state < 0, 0, start)
+  )
   present_chromosomes <- unique(state_assignments[["chr"]])
   for (chromosome in present_chromosomes) {
     chromosome_size <- chromosome_sizes[[chromosome]]
-    state_assignments <- state_assignments |>
-      dplyr::mutate(
-        start = ifelse(
-          start < 0 && chr == chromosome,
-          0,
-          start
-        ),
-        end = ifelse(
-          end > chromosome_size && chr == chromosome,
-          chromosome_size,
-          end
-        )
+    state_assignments <- dplyr::mutate(
+      state_assignments,
+      end = ifelse(
+        end > chromosome_size && chr == chromosome,
+        chromosome_size,
+        end
       )
+    )
   }
   return(state_assignments)
 }
