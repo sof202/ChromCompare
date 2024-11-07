@@ -38,6 +38,17 @@ correct_invalid_bounds <- function(state_assignments, chromosome_sizes) {
   return(state_assignments)
 }
 
+save_file <- function(data, file_path) {
+  data.table::fwrite(
+    data,
+    file = file_path,
+    quote = FALSE,
+    sep = "\t",
+    row.names = FALSE,
+    col.names = FALSE
+  )
+}
+
 main <- function(state_assignments_file, margin, chromosome_sizes_file) {
   state_assignments <- data.table::fread(
     state_assignments_file,
