@@ -113,7 +113,7 @@ run_spatial_similarity() {
   output_file_prefix=$4
 
 
-  shift 5
+  shift 4
   margins=("$@")
   for margin in "${margins[@]}"; do
     Rscript \
@@ -189,8 +189,8 @@ main() {
   margins=(0 "${BIN_SIZE}" $((BIN_SIZE * 10)))
   state_assignments_similarity_file_prefix="${PROCESSING_DIRECTORY}/similarity_scores/state_assignment_similarity"
   run_spatial_similarity \
-    "${MODEL_ONE_STATE_ASSIGNMENTS_FILE}" \
-    "${MODEL_TWO_STATE_ASSIGNMENTS_FILE}" \
+    "${PROCESSING_DIRECTORY}/state_assignments_model_one.bed"
+    "${PROCESSING_DIRECTORY}/state_assignments_model_two.bed"
     "${BIN_SIZE}" \
     "${state_assignments_similarity_file_prefix}" \
     "${margins[@]}"
