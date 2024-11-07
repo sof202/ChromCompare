@@ -1,0 +1,49 @@
+## ======================================== ##
+##    CONFIGURATION FILE FOR CHROMCOMPARE   ##
+## ======================================== ##
+## Some variables are filled in with        ##
+## defaults/placeholders already. Please    ##
+## make sure all variables have a value     ##
+## before using the script.                 ##
+## ======================================== ##
+
+# ----- #
+# DEBUG #
+# ----- #
+
+# For additional logging and keeping intermediate files, set this to 1.
+DEBUG_MODE=0
+
+# ----------- #
+# DIRECTORIES #
+# ----------- #
+
+REPO_DIRECTORY="full/path/to/root/of/this/repo"
+PYTHON_DIRECTORY="${REPO_DIRECTORY}/Python_Scripts"
+RSCRIPT_DIRECTORY="${REPO_DIRECTORY}/Rscripts"
+
+# The similarity matrices (output of the pipeline) will be saved here
+OUTPUT_DIRECTORY="path/to/outputs"
+
+# ---------- #
+# PARAMETERS #
+# ---------- #
+
+# Ideally both models were learned with the same bin size in ChromHMM. If you
+# did not consciously set the bin size, you can keep this at 200 (default).
+# If your models have 2 different sizes, you might want to set this to the
+# minimum bin size of the two models.
+BIN_SIZE=200
+
+# ----------- #
+# MODEL FILES #
+# ----------- #
+
+# ChromHMM returns emission files and files ending in _segments.bed. Please
+# put the full file paths to these files for the reference model and comparison
+# model here.
+MODEL_ONE_EMISSIONS_FILE="full/path/to/emissions/file"
+MODEL_ONE_STATE_ASSIGNMENTS_FILE="full/path/to/state/assignments/file"
+
+MODEL_TWO_EMISSIONS_FILE="full/path/to/emissions/file"
+MODEL_TWO_STATE_ASSIGNMENTS_FILE="full/path/to/state/assignments/file"

@@ -24,3 +24,33 @@ genome. This way, users can make much more informed decisions about which
 states are shared between two models, and which ones are unique to only one.
 Knowing this information can be very useful when looking for cell type or
 tissue type differences.
+
+## Setup
+
+In order to run ChromCompare, you must first complete the required setup steps
+highlighted below:
+
+1) Download all [required software](#required-software)
+2) Fill in the configuration file found in `.../Setup` and place this file
+in a memorable location (you can just leave it in the Setup directory if you
+wish). You can also change the name of the file if you think you will have
+multiple configuaration files.
+3) Run the main `ChromCompare.sh` script (found in `JobSubmission`) with
+Slurm Workload Manager, provide the full path to the config file as the first
+and only argument to the script.
+
+An example of running the main script would be:
+
+```bash
+sbatch .../ChromCompare.sh .../path/to/configuration_file.txt
+```
+
+
+## Required Software
+
+ChromCompare requires the following software in order to run:
+
+- [bash](https://www.gnu.org/software/bash/) (>=4.2.46(2))
+- [SLURM Workload Manager](https://slurm.schedmd.com/overview.html) (>=20.02.3)
+- [R](https://www.r-project.org) (4.4.1)
+- [python](https://www.python.org) (>= 3.10.0)
