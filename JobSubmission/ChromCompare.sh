@@ -65,7 +65,7 @@ run_emission_similarity() {
     "${output_file}"
 }
 
-create_bins() {
+create_blank_bins() {
   state_assignment_file_one=$1
   bin_size=$2
   chromosome_sizes_file=$3
@@ -158,7 +158,9 @@ main() {
   source_config_file "${config_file_location}"
   move_log_files
 
-  mkdir "${OUTPUT_DIRECTORY}/similarity_scores"
+  mkdir -p \
+    "${OUTPUT_DIRECTORY}/similarity_scores" \
+    "${PROCESSING_DIRECTORY}"
 
   emission_similarities_file="${PROCESSING_DIRECTORY}/similarity_scores/emission_similarity.txt"
   run_emission_similarity \
@@ -166,7 +168,7 @@ main() {
     "${MODEL_TWO_EMISSIONS_FILE}" \
     "${emission_similarities_file}"
 
-  create_bins \
+  create_blank_bins \
     "${MODEL_ONE_STATE_ASSIGNMENTS_FILE}" \
     "${BIN_SIZE}" \
     "${CHROMOSOME_SIZES_FILE}" \
