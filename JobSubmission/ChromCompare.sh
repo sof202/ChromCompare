@@ -85,6 +85,12 @@ create_bins() {
 }
 
 convert_state_assignments() {
+  # ChromHMM's state assignment files are created in a way to be memory 
+  # efficient. If multiple bins have the same state assignment, they are
+  # collapsed into one. This is not ideal for this pipeline as we want to
+  # count the number of base pairs assigned to each state pair. By converting
+  # these files to no longer be collapsed, the code becomes more efficient and
+  # easier to follow.
   sorted_blank_bins_file=$1
   state_assignment_file=$2
   output_file_path=$3
