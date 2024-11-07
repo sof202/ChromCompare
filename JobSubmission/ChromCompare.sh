@@ -68,9 +68,15 @@ run_emission_similarity() {
 run_spatial_similarity() {
   state_assignment_file_one=$1
   state_assignment_file_two=$2
-  emission_file_one=$3
-  emission_file_two=$4
+  bin_size=$3
+  chromosome_sizes_file=$4
   output_file=$5
+
+  Rscript \
+    "${RSCRIPT_DIRECTORY}/create_blank_bed_file" \
+    "${bin_size}" \
+    "${state_assignment_file_one}" \
+    "${chromosome_sizes_file}"
 
   shift 5
   margins=("$@")
@@ -79,8 +85,6 @@ run_spatial_similarity() {
       "${RSCRIPT_DIRECTORY}/spatial_similarity.R" \
       "${state_assignment_file_one}" \
       "${state_assignment_file_two}" \
-      "${emission_file_one}" \
-      "${emission_file_two}" \
       "${margin}" \
       "${output_file}"
   done
@@ -126,6 +130,8 @@ main() {
     "${MODEL_ONE_STATE_ASSIGNMENTS_FILE}" \
     "${MODEL_ONE_EMISSIONS_FILE}" \
     "${MODEL_TWO_EMISSIONS_FILE}" \
+    "${BIN_SIZE}" \
+    "${CHROMOSOME_SIZES_FILE}" \
     "${state_assignments_similarity_file}" \
     "${margins[@]}"
 
