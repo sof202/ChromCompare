@@ -65,6 +65,38 @@ run_emission_similarity() {
     "${output_file}"
 }
 
+create_bins() {
+  state_assignment_file_one=$1
+  bin_size=$2
+  chromosome_sizes_file=$3
+  output_file=$4
+
+  Rscript \
+    "${RSCRIPT_DIRECTORY}/create_blank_bed_file" \
+    "${bin_size}" \
+    "${state_assignment_file_one}" \
+    "${chromosome_sizes_file}" \
+    "${PROCESSING_DIRECTORY}/blank_bins.bed"
+
+  bedtools sort -i \
+    "${PROCESSING_DIRECTORY}/blank_bins.bed" > \
+    "${output_file}"
+
+}
+
+convert_state_assignments() {
+  sorted_blank_bins_file=$1
+  state_assignment_file=$2
+  output_file_path=$3
+
+  bedtools intersect \
+    -wb \
+    -a "${sorted_blank_bins_file}" \
+    -b "${state_assignment_file}" | \
+    awk '{OFS = "\t"} {print $1,$2,$3,$7}' > \
+    "${output_file_path}"
+}
+
 run_spatial_similarity() {
   state_assignment_file_one=$1
   state_assignment_file_two=$2
@@ -72,23 +104,6 @@ run_spatial_similarity() {
   chromosome_sizes_file=$4
   output_file=$5
 
-  Rscript \
-    "${RSCRIPT_DIRECTORY}/create_blank_bed_file" \
-    "${bin_size}" \
-    "${state_assignment_file_one}" \
-    "${chromosome_sizes_file}"
-    "${PROCESSING_DIRECTORY}/blank_bins.bed"
-
-  bedtools sort -i \
-    "${PROCESSING_DIRECTORY}/blank_bins.bed" > \
-    "${PROCESSING_DIRECTORY}/sorted_blank_bins.bed"
-
-  bedtools intersect \
-    -wb \
-    -a "${PROCESSING_DIRECTORY}/sorted_blank_bins.bed" \
-    -b "${state_assignment_file_one}" | \
-    awk '{OFS = "\t"} {print $1,$2,$3,$7}' > \
-    "${PROCESSING_DIRECTORY}/state_assignment_file_one.bed"
 
   shift 5
   margins=("$@")
@@ -135,13 +150,26 @@ main() {
     "${MODEL_TWO_EMISSIONS_FILE}" \
     "${emission_similarities_file}"
 
+  create_bins \
+    "${MODEL_ONE_STATE_ASSIGNMENTS_FILE}" \
+    "${BIN_SIZE}" \
+    "${CHROMOSOME_SIZES_FILE}" \
+    "${PROCESSING_DIRECTORY}/sorted_blank_bins.bed"
+
+  convert_state_assignments \
+    "${PROCESSING_DIRECTORY}/sorted_blank_bins.bed" \
+    "${MODEL_ONE_STATE_ASSIGNMENTS_FILE}" \
+    "${PROCESSING_DIRECTORY}/state_assignments_model_one.bed"
+  convert_state_assignments \
+    "${PROCESSING_DIRECTORY}/sorted_blank_bins.bed" \
+    "${MODEL_TWO_STATE_ASSIGNMENTS_FILE}" \
+    "${PROCESSING_DIRECTORY}/state_assignments_model_two.bed"
+
   margins=(0 "${BIN_SIZE}" $((BIN_SIZE * 10)))
   state_assignments_similarity_file="${PROCESSING_DIRECTORY}/similarity_scores/state_assignment_similarity.txt"
   run_spatial_similarity \
     "${MODEL_ONE_STATE_ASSIGNMENTS_FILE}" \
-    "${MODEL_ONE_STATE_ASSIGNMENTS_FILE}" \
-    "${MODEL_ONE_EMISSIONS_FILE}" \
-    "${MODEL_TWO_EMISSIONS_FILE}" \
+    "${MODEL_TWO_STATE_ASSIGNMENTS_FILE}" \
     "${BIN_SIZE}" \
     "${CHROMOSOME_SIZES_FILE}" \
     "${state_assignments_similarity_file}" \
