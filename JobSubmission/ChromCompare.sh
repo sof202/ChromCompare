@@ -77,6 +77,18 @@ run_spatial_similarity() {
     "${bin_size}" \
     "${state_assignment_file_one}" \
     "${chromosome_sizes_file}"
+    "${PROCESSING_DIRECTORY}/blank_bins.bed"
+
+  bedtools sort -i \
+    "${PROCESSING_DIRECTORY}/blank_bins.bed" > \
+    "${PROCESSING_DIRECTORY}/sorted_blank_bins.bed"
+
+  bedtools intersect \
+    -wb \
+    -a "${PROCESSING_DIRECTORY}/sorted_blank_bins.bed" \
+    -b "${state_assignment_file_one}" | \
+    awk '{OFS = "\t"} {print $1,$2,$3,$7}' > \
+    "${PROCESSING_DIRECTORY}/state_assignment_file_one.bed"
 
   shift 5
   margins=("$@")
