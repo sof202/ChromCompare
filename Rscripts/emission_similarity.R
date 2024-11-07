@@ -34,7 +34,7 @@ save_file <- function(matrix, file_path) {
     quote = FALSE,
     row.names = TRUE,
     col.names = TRUE,
-    sep = "\t"
+    sep = ","
   )
 }
 
