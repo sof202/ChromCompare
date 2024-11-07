@@ -107,8 +107,7 @@ run_spatial_similarity() {
   state_assignment_file_one=$1
   state_assignment_file_two=$2
   bin_size=$3
-  chromosome_sizes_file=$4
-  output_file=$5
+  output_file=$4
 
 
   shift 5
