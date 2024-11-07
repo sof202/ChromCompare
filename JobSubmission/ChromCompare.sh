@@ -138,6 +138,7 @@ run_spatial_similarity() {
     Rscript \
       "${RSCRIPT_DIRECTORY}/spatial_similarity.R" \
       "${PROCESSING_DIRECTORY}/state_assignment_overlap_margin_${margin}.bed" \
+      "${bin_size}" \
       "${output_file_prefix}${margin}.txt"
   done
 }
