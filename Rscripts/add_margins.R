@@ -72,4 +72,5 @@ margin <- as.numeric(args[[2]])
 chromosome_sizes_file <- args[[3]]
 output_file_path <- args[[4]]
 
+options(scipen = 12)
 main(state_assignments_file, margin, chromosome_sizes_file, output_file_path)
