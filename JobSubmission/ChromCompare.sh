@@ -78,6 +78,9 @@ create_blank_bins() {
     "${chromosome_sizes_file}" \
     "${PROCESSING_DIRECTORY}/blank_bins.bed"
 
+  # Sorting required for later bedtools intersect. The output of the Rscript is
+  # most likely sorted alphabetically rather than numerically (for chromosome
+  # order)
   bedtools sort -i \
     "${PROCESSING_DIRECTORY}/blank_bins.bed" > \
     "${output_file}"
