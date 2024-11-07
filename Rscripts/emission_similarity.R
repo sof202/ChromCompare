@@ -13,6 +13,25 @@ match_columns <- function(table_one, table_two) {
   return(list(table_one, table_two))
 }
 
+create_distances_matrix <- function(emissions_one, emissions_two) {
+  emissions_one <- as.matrix(emissions_one)
+  emissions_two <- as.matrix(emissions_two)
+
+  states_one <- seq_len(nrow(emissions_one))
+  states_two <- seq_len(nrow(emissions_two))
+
+  distances_matrix <- vapply(states_one, function(i) {
+    vapply(states_two, function(j) {
+      sqrt(sum((emissions_one[i, ] - emissions_two[j, ])^2))
+    }, numeric(1))
+  }, numeric(nrow(emissions_two)))
+
+  rownames(distances_matrix) <- states_one
+  colnames(distances_matrix) <- states_two
+
+  return(distances_matrix)
+}
+
 main <- function(emission_file_one, emission_file_two, output_file) {
   emissions_one <- data.table::fread(emission_file_one)
   emissions_two <- data.table::fread(emission_file_two)
