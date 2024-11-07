@@ -1,8 +1,3 @@
-args <- commandArgs(trailingOnly = TRUE)
-emission_file_one <- args[[1]]
-emission_file_two <- args[[2]]
-output_file_path <- args[[3]]
-
 remove_state_column <- function(emissions_table) {
   return(dplyr::select(emissions_table, -"State (Emission order)"))
 }
@@ -62,3 +57,10 @@ main <- function(emission_file_one, emission_file_two, output_file) {
 
   save_file(emission_distances_matrix, output_file_path)
 }
+
+args <- commandArgs(trailingOnly = TRUE)
+emission_file_one <- args[[1]]
+emission_file_two <- args[[2]]
+output_file_path <- args[[3]]
+
+main(emission_file_one, emission_file_two, output_file_path)
