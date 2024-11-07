@@ -21,8 +21,8 @@ create_distances_matrix <- function(emissions_one, emissions_two) {
     }, numeric(1))
   }, numeric(nrow(emissions_two)))
 
-  rownames(distances_matrix) <- states_one
-  colnames(distances_matrix) <- states_two
+  colnames(distances_matrix) <- states_one
+  rownames(distances_matrix) <- states_two
 
   return(distances_matrix)
 }
