@@ -21,7 +21,7 @@ correct_invalid_bounds <- function(state_assignments, chromosome_sizes) {
   # into the negatives. We need to correct for such bounds.
   state_assignments <- dplyr::mutate(
     state_assignments,
-    start = ifelse(state < 0, 0, start)
+    start = ifelse(start < 0, 0, start)
   )
   present_chromosomes <- unique(state_assignments[["chr"]])
   for (chromosome in present_chromosomes) {
@@ -29,8 +29,8 @@ correct_invalid_bounds <- function(state_assignments, chromosome_sizes) {
     state_assignments <- dplyr::mutate(
       state_assignments,
       end = ifelse(
-        end > chromosome_size && chr == chromosome,
-        chromosome_size,
+        end > chromosome_size,
+        ifelse(chr == chromosome, chromosome_size, end),
         end
       )
     )
