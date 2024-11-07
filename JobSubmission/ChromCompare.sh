@@ -112,7 +112,6 @@ run_spatial_similarity() {
   bin_size=$3
   output_file_prefix=$4
 
-
   shift 4
   margins=("$@")
   for margin in "${margins[@]}"; do
@@ -128,10 +127,17 @@ run_spatial_similarity() {
       "${margin}" \
       "${PROCESSING_DIRECTORY}/state_assignments_two_margin_${margin}.bed"
 
+    bedtools intersect \
+      -wo \
+      -a "${PROCESSING_DIRECTORY}/state_assignments_one_margin_${margin}.bed" \
+      -b "${PROCESSING_DIRECTORY}/state_assignments_two_margin_${margin}.bed" | \
+      awk '{OFS="\t"} {print $4,$8}' > \
+      "${PROCESSING_DIRECTORY}/state_assignment_overlap_margin_${margin}.bed"
+
+
     Rscript \
       "${RSCRIPT_DIRECTORY}/spatial_similarity.R" \
-      "${PROCESSING_DIRECTORY}/state_assignments_one_margin_${margin}.bed" \
-      "${PROCESSING_DIRECTORY}/state_assignments_two_margin_${margin}.bed" \
+      "${PROCESSING_DIRECTORY}/state_assignment_overlap_margin_${margin}.bed" \
       "${output_file_prefix}${margin}.txt"
   done
 }
