@@ -49,7 +49,10 @@ save_file <- function(data, file_path) {
   )
 }
 
-main <- function(state_assignments_file, margin, chromosome_sizes_file) {
+main <- function(state_assignments_file,
+                 margin,
+                 chromosome_sizes_file,
+                 output_file_path) {
   state_assignments <- data.table::fread(
     state_assignments_file,
     col.names = c("chr", "start", "end", "state")
@@ -60,12 +63,13 @@ main <- function(state_assignments_file, margin, chromosome_sizes_file) {
     state_assignments,
     chromosome_sizes
   )
-  save_file(state_assignments)
+  save_file(state_assignments, output_file_path)
 }
 
 args <- commandArgs(trailingOnly = TRUE)
 state_assignments_file <- args[[1]]
 margin <- as.numeric(args[[2]])
 chromosome_sizes_file <- args[[3]]
+output_file_path <- args[[4]]
 
-main(state_assignments_file, margin, chromosome_sizes_file)
+main(state_assignments_file, margin, chromosome_sizes_file, output_file_path)
