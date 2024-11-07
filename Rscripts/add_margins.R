@@ -15,6 +15,22 @@ add_margins <- function(state_assignments, margin) {
     dplyr::mutate(start = start - margin, end = end + margin)
 }
 
+correct_invalid_bounds <- function(state_assignments, chromosome_sizes) {
+  # When adding margins, some extremal intervals will end up being invalid.
+  # For example, the intervals at the start of each chromosome will now span
+  # into the negatives. We need to correct for such bounds.
+  present_chromosomes <- unique(state_assignments[["chr"]])
+  for (chromosome in present_chromosomes) {
+    chromosome_size <- chromosome_sizes[[chromosome]]
+    state_assignments <- dplyr::mutate(
+      state_assignments,
+      start = ifelse(start < 0, 0, start),
+      end = ifelse(end > chromosome_size, chromosome_size, end)
+    )
+  }
+  return(state_assignments)
+}
+
 main <- function(state_assignments_file, margin, chromosome_sizes_file) {
   state_assignments <- data.table::fread(
     state_assignments_file,
@@ -22,6 +38,10 @@ main <- function(state_assignments_file, margin, chromosome_sizes_file) {
   )
   chromosome_sizes <- process_chromosome_sizes(chromosome_sizes_file)
   state_assignments <- add_margins(state_assignments, margin)
+  state_assignments <- correct_invalid_bounds(
+    state_assignments,
+    chromosome_sizes
+  )
   save_file(state_assignments)
 }
 
