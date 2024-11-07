@@ -132,7 +132,7 @@ run_spatial_similarity() {
       "${RSCRIPT_DIRECTORY}/spatial_similarity.R" \
       "${PROCESSING_DIRECTORY}/state_assignments_one_margin_${margin}.bed" \
       "${PROCESSING_DIRECTORY}/state_assignments_two_margin_${margin}.bed" \
-      "${output_file_prefix}_${margin}.txt"
+      "${output_file_prefix}${margin}.txt"
   done
 }
 
@@ -187,7 +187,7 @@ main() {
     "${PROCESSING_DIRECTORY}/state_assignments_model_two.bed"
 
   margins=(0 "${BIN_SIZE}" $((BIN_SIZE * 10)))
-  state_assignments_similarity_file_prefix="${PROCESSING_DIRECTORY}/similarity_scores/state_assignment_similarity"
+  state_assignments_similarity_file_prefix="${PROCESSING_DIRECTORY}/similarity_scores/state_assignment_similarity_margin_"
   run_spatial_similarity \
     "${PROCESSING_DIRECTORY}/state_assignments_model_one.bed"
     "${PROCESSING_DIRECTORY}/state_assignments_model_two.bed"
