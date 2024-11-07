@@ -1,7 +1,7 @@
 args <- commandArgs(trailingOnly = TRUE)
 emission_file_one <- args[[1]]
 emission_file_two <- args[[2]]
-output_file <- args[[3]]
+output_file_path <- args[[3]]
 
 remove_state_column <- function(emissions_table) {
   return(dplyr::select(emissions_table, -"State (Emission order)"))
@@ -32,6 +32,17 @@ create_distances_matrix <- function(emissions_one, emissions_two) {
   return(distances_matrix)
 }
 
+save_file <- function(matrix, file_path) {
+  data.table::fwrite(
+    matrix,
+    file = file_path,
+    quote = FALSE,
+    row.names = TRUE,
+    col.names = TRUE,
+    sep = "\t"
+  )
+}
+
 main <- function(emission_file_one, emission_file_two, output_file) {
   emissions_one <- data.table::fread(emission_file_one)
   emissions_two <- data.table::fread(emission_file_two)
@@ -49,5 +60,5 @@ main <- function(emission_file_one, emission_file_two, output_file) {
       emissions_two
     )
 
-  save_file(emission_distances_matrix, output_file)
+  save_file(emission_distances_matrix, output_file_path)
 }
