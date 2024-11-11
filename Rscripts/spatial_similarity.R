@@ -1,23 +1,35 @@
 main <- function(combined_assignments_file, bin_size, output_file_path) {
-  stats_table <- data.table::data.table(
-    "model_one_state" = numeric(1),
-    "model_two_state" = numeric(2),
-    "bp_in_model_one_state" = numeric(1),
-    "bp_in_model_two_state" = numeric(1),
-    "bp_in_overlap_for_state_pair" = numeric(1),
-    "fold_enrichment_for_pair" = numeric(1)
+  model_one_stats_table <- data.table::data.table(
+    "state" = numeric(1),
+    "bp_in_assignment" = numeric(1),
   )
+  model_two_stats_table <- data.table::data.table(
+    "state" = numeric(1),
+    "bp_in_assignment" = numeric(1),
+  )
+  model_one_stats_table <- model_one_stats_table |>
+    fill_in_states(combined_assignments_file, 1) |>
+    add_bp_coverage(combined_assignments_file, bin_size, 1)
+  model_two_stats_table <- model_two_stats_table |>
+    fill_in_states(combined_assignments_file, 2) |>
+    add_bp_coverage(combined_assignments_file, bin_size, 2)
+  stats_table <- merge_stats_tables(
+    model_one_stats_table,
+    model_two_stats_table
+  )
+  colnames(stats_table) <- c(
+    "state_one", "bp_in_assignment_one",
+    "state_two", "bp_in_assignment_two"
+  )
+
+  stats_table <- add_bp_overlap(stats_table)
+
   genome_size <- calculate_genome_size(combined_assignments_file, bin_size)
-  stats_table <- stats_table |>
-    fill_in_states() |>
-    calculate_bp_coverage(combined_assignments_file, bin_size, 1) |>
-    calculate_bp_coverage(combined_assignments_file, bin_size, 2) |>
-    calculate_overlapping_bp(combined_assignments_file, bin_size) |>
-    calculate_fold_enrichment(genome_size)
 
   fold_enrichment_matrix <- create_fold_enrichment_matrix(stats_table)
   fold_enrichment_heatmap <-
     create_fold_enrichment_heatmap(fold_enrichment_matrix)
+
   save_matrix(fold_enrichment_matrix)
   save_heatmap(fold_enrichment_heatmap)
 }
