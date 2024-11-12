@@ -5,6 +5,17 @@ generate_stats_table <- function(combined_assignments, column) {
   return(stats_table)
 }
 
+add_bp_coverage <- function(states, state_assignments) {
+  bp_coverage <- lapply(states, function(state) {
+    sum(state_assignments == state)
+  })
+  stats_table <- data.table::data.table(
+    "states" = states,
+    "bp_coverage" = bp_coverage
+  )
+  return(stats_table)
+}
+
 main <- function(combined_assignments_file, bin_size, output_file_path) {
   combined_assignments <- data.table::fread(
     combined_assignments_file,
