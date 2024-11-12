@@ -55,10 +55,6 @@ main <- function(combined_assignments_file, bin_size, output_file_path) {
     model_one_stats_table,
     model_two_stats_table
   )
-  colnames(stats_table) <- c(
-    "state_one", "bp_in_assignment_one",
-    "state_two", "bp_in_assignment_two"
-  )
 
   stats_table <- add_bp_overlap(stats_table)
 
