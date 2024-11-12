@@ -36,6 +36,23 @@ merge_stats_tables <- function(stats_table_one, stats_table_two) {
   return(merged_stats_table)
 }
 
+add_bp_overlap <- function(stats_table, combined_assignments) {
+  for (row in seq_len(nrow(stats_table))) {
+    state_one <- stats_table[["state_one"]][[row]]
+    state_two <- stats_table[["state_two"]][[row]]
+    overlap <- dplyr::filter(
+      combined_assignments,
+      model_one == state_one,
+      model_two == state_two
+    ) |>
+      dplyr::select(
+        overlap
+      )
+    total_overlap <- sum(overlap)
+    stats_table[["bp_overlap"]][[row]] <- total_overlap
+  }
+}
+
 calculate_genome_size <- function(combined_assignments, bin_size) {
   return(nrow(combined_assignments) * bin_size)
 }
@@ -56,7 +73,7 @@ main <- function(combined_assignments_file, bin_size, output_file_path) {
     model_two_stats_table
   )
 
-  stats_table <- add_bp_overlap(stats_table)
+  stats_table <- add_bp_overlap(stats_table, combined_assignments)
 
   genome_size <- calculate_genome_size(combined_assignments, bin_size)
 
