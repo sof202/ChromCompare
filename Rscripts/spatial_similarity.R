@@ -36,6 +36,10 @@ merge_stats_tables <- function(stats_table_one, stats_table_two) {
   return(merged_stats_table)
 }
 
+calculate_genome_size <- function(combined_assignments, bin_size) {
+  return(nrow(combined_assignments) * bin_size)
+}
+
 main <- function(combined_assignments_file, bin_size, output_file_path) {
   combined_assignments <- data.table::fread(
     combined_assignments_file,
