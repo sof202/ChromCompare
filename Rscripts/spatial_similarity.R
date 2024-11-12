@@ -40,11 +40,8 @@ main <- function(combined_assignments_file, bin_size, output_file_path) {
   genome_size <- calculate_genome_size(combined_assignments, bin_size)
 
   fold_enrichment_matrix <- create_fold_enrichment_matrix(stats_table)
-  fold_enrichment_heatmap <-
-    create_fold_enrichment_heatmap(fold_enrichment_matrix)
 
   save_matrix(fold_enrichment_matrix)
-  save_heatmap(fold_enrichment_heatmap)
 }
 
 args <- commandArgs(trailingOnly = TRUE)
