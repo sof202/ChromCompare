@@ -131,7 +131,7 @@ run_spatial_similarity() {
       -wo \
       -a "${PROCESSING_DIRECTORY}/state_assignments_one_margin_${margin}.bed" \
       -b "${PROCESSING_DIRECTORY}/state_assignments_two_margin_${margin}.bed" | \
-      awk '{OFS="\t"} {print $4,$8}' > \
+      awk '{OFS="\t"} {print $4,$8,$9}' > \
       "${PROCESSING_DIRECTORY}/state_assignment_overlap_margin_${margin}.bed"
 
 
