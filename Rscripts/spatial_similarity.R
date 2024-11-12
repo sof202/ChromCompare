@@ -15,10 +15,31 @@ add_bp_coverage <- function(states, state_assignments, bin_size) {
   return(stats_table)
 }
 
+merge_stats_tables <- function(stats_table_one, stats_table_two) {
+  merged_stats_table <- data.table::data.table(
+    "state_one" = integer(0),
+    "state_two" = integer(0),
+    "bp_coverage_one" = integer(0),
+    "bp_coverage_two" = integer(0)
+  )
+  for (i in seq_len(nrow(stats_table_one))) {
+    for (j in seq_len(nrow(stats_table_two))) {
+      new_row <- c(
+        "state_one" = stats_table_one[["States"]][[i]],
+        "state_two" = stats_table_two[["States"]][[j]],
+        "bp_coverage_one" = stats_table_one[["bp_coverage"]][[i]],
+        "bp_coverage_two" = stats_table_two[["bp_coverage"]][[j]]
+      )
+      merged_stats_table <- dplyr::bind_rows(merged_stats_table, new_row)
+    }
+  }
+  return(merged_stats_table)
+}
+
 main <- function(combined_assignments_file, bin_size, output_file_path) {
   combined_assignments <- data.table::fread(
     combined_assignments_file,
-    colnames = c("model_one", "model_two")
+    colnames = c("model_one", "model_two", "overlap")
   )
   model_one_stats_table <-
     find_states_assigned(combined_assignments[["model_one"]]) |>
