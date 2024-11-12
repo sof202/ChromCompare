@@ -1,13 +1,12 @@
-generate_stats_table <- function(combined_assignments, column) {
-  states_present <- unique(combined_assignments[[column]])
+find_states_assigned <- function(state_assignments) {
+  states_present <- unique(state_assignments)
   sorted_states <- sort(states_present)
-  stats_table <- data.table::data.table("state" = sorted_states)
-  return(stats_table)
+  return(sorted_states)
 }
 
-add_bp_coverage <- function(states, state_assignments) {
+add_bp_coverage <- function(states, state_assignments, bin_size) {
   bp_coverage <- lapply(states, function(state) {
-    sum(state_assignments == state)
+    sum(state_assignments == state) * bin_size
   })
   stats_table <- data.table::data.table(
     "states" = states,
@@ -22,11 +21,11 @@ main <- function(combined_assignments_file, bin_size, output_file_path) {
     colnames = c("model_one", "model_two")
   )
   model_one_stats_table <-
-    generate_stats_table(combined_assignments, column = "model_one") |>
-    add_bp_coverage(combined_assignments, bin_size, 1)
+    find_states_assigned(combined_assignments[["model_one"]]) |>
+    add_bp_coverage(combined_assignments, bin_size)
   model_two_stats_table <-
-    generate_stats_table(combined_assignments, column = "model_two") |>
-    add_bp_coverage(combined_assignments, bin_size, 2)
+    find_states_assigned(combined_assignments[["model_two"]]) |>
+    add_bp_coverage(combined_assignments, bin_size)
   stats_table <- merge_stats_tables(
     model_one_stats_table,
     model_two_stats_table
