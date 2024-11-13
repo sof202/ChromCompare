@@ -55,6 +55,32 @@ calculate_genome_size <- function(combined_assignments, bin_size) {
   return(nrow(combined_assignments) * bin_size)
 }
 
+calculate_fold_enrichment <- function(a, b, c, d) {
+  # Formula taken straight from OverlapEnrichment function from ChromHMM.
+  # The manual for this function reads:
+  #
+  # By default the fold enrichment calculation is as follows, let:
+  # A - be the number of bases in the state
+  # B - be the number of bases in the external annotation
+  # C - be the number of bases in the state and the external annotation
+  # D - be the number of bases in the genome
+  # The fold enrichment is then defined as (C/A)/(B/D).
+  return((c * d) / (a * b))
+}
+
+add_fold_enrichment <- function(stats_table, genome_size) {
+  stats_table <- dplyr::mutate(
+    stats_table,
+    "fold_enrichment" = calculate_fold_enrichment(
+      bp_coverage_one,
+      bp_coverage_two,
+      bp_overlap,
+      genome_size
+    )
+  )
+  return(stats_table)
+}
+
 main <- function(combined_assignments_file, bin_size, output_file_path) {
   combined_assignments <- data.table::fread(
     combined_assignments_file,
@@ -74,6 +100,8 @@ main <- function(combined_assignments_file, bin_size, output_file_path) {
   stats_table <- add_bp_overlap(stats_table, combined_assignments)
 
   genome_size <- calculate_genome_size(combined_assignments, bin_size)
+
+  stats_table <- add_fold_enrichment(stats_table, genome_size)
 
   fold_enrichment_matrix <- create_fold_enrichment_matrix(stats_table)
 
