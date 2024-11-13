@@ -25,8 +25,8 @@ merge_stats_tables <- function(stats_table_one, stats_table_two) {
   for (i in seq_len(nrow(stats_table_one))) {
     for (j in seq_len(nrow(stats_table_two))) {
       new_row <- c(
-        "state_one" = stats_table_one[["States"]][[i]],
-        "state_two" = stats_table_two[["States"]][[j]],
+        "state_one" = stats_table_one[["states"]][[i]],
+        "state_two" = stats_table_two[["states"]][[j]],
         "bp_coverage_one" = stats_table_one[["bp_coverage"]][[i]],
         "bp_coverage_two" = stats_table_two[["bp_coverage"]][[j]]
       )
