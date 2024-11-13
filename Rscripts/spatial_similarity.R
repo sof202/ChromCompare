@@ -98,7 +98,7 @@ create_fold_enrichment_matrix <- function(stats_table) {
 }
 
 save_matrix <- function(matrix, file_path) {
-  data.table::fwrite(
+  write.table(
     matrix,
     file = file_path,
     quote = FALSE,
