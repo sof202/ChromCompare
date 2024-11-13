@@ -81,6 +81,18 @@ add_fold_enrichment <- function(stats_table, genome_size) {
   return(stats_table)
 }
 
+create_fold_enrichment_matrix <- function(stats_table) {
+  fold_enrichment_matrix <- stats_table |>
+    dplyr::select(state_one, state_two, fold_enrichment) |>
+    tidyr::pivot_wider(
+      names_from = state_two,
+      values_from = fold_enrichment
+    ) |>
+    data.table::as.data.table() |>
+    as.matrix(rownames = "state_one")
+  return(fold_enrichment_matrix)
+}
+
 main <- function(combined_assignments_file, bin_size, output_file_path) {
   combined_assignments <- data.table::fread(
     combined_assignments_file,
