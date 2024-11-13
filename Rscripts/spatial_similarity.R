@@ -93,6 +93,17 @@ create_fold_enrichment_matrix <- function(stats_table) {
   return(fold_enrichment_matrix)
 }
 
+save_matrix <- function(matrix, file_path) {
+  data.table::fwrite(
+    matrix,
+    file = file_path,
+    quote = FALSE,
+    row.names = FALSE,
+    col.names = TRUE,
+    sep = ","
+  )
+}
+
 main <- function(combined_assignments_file, bin_size, output_file_path) {
   combined_assignments <- data.table::fread(
     combined_assignments_file,
@@ -117,7 +128,7 @@ main <- function(combined_assignments_file, bin_size, output_file_path) {
 
   fold_enrichment_matrix <- create_fold_enrichment_matrix(stats_table)
 
-  save_matrix(fold_enrichment_matrix)
+  save_matrix(fold_enrichment_matrix, output_file_path)
 }
 
 args <- commandArgs(trailingOnly = TRUE)
