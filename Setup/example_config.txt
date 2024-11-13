@@ -47,3 +47,12 @@ MODEL_ONE_STATE_ASSIGNMENTS_FILE="full/path/to/state/assignments/file"
 
 MODEL_TWO_EMISSIONS_FILE="full/path/to/emissions/file"
 MODEL_TWO_STATE_ASSIGNMENTS_FILE="full/path/to/state/assignments/file"
+
+# ---------------- #
+# ADDITIONAL FILES #
+# ---------------- #
+
+# ChromHMM comes with files in the CHROMSIZES directory that give the size of
+# each chromosome under several different genome builds. Please provide a path
+# to your desired genome build.
+CHROMOSOME_SIZES_FILE="path/to/ChromHMM/CHROMSIZES/hg38.txt"

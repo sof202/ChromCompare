@@ -65,24 +65,81 @@ run_emission_similarity() {
     "${output_file}"
 }
 
+create_blank_bins() {
+  state_assignment_file_one=$1
+  bin_size=$2
+  chromosome_sizes_file=$3
+  output_file=$4
+
+  Rscript \
+    "${RSCRIPT_DIRECTORY}/create_blank_bed_file" \
+    "${bin_size}" \
+    "${state_assignment_file_one}" \
+    "${chromosome_sizes_file}" \
+    "${PROCESSING_DIRECTORY}/blank_bins.bed"
+
+  # Sorting required for later bedtools intersect. The output of the Rscript is
+  # most likely sorted alphabetically rather than numerically (for chromosome
+  # order)
+  bedtools sort -i \
+    "${PROCESSING_DIRECTORY}/blank_bins.bed" > \
+    "${output_file}"
+
+}
+
+convert_state_assignments() {
+  # ChromHMM's state assignment files are created in a way to be memory 
+  # efficient. If multiple bins have the same state assignment, they are
+  # collapsed into one. This is not ideal for this pipeline as we want to
+  # count the number of base pairs assigned to each state pair. By converting
+  # these files to no longer be collapsed, the code becomes more efficient and
+  # easier to follow.
+  sorted_blank_bins_file=$1
+  state_assignment_file=$2
+  output_file_path=$3
+
+  bedtools intersect \
+    -wb \
+    -a "${sorted_blank_bins_file}" \
+    -b "${state_assignment_file}" | \
+    awk '{OFS = "\t"} {print $1,$2,$3,$7}' > \
+    "${output_file_path}"
+}
+
 run_spatial_similarity() {
   state_assignment_file_one=$1
   state_assignment_file_two=$2
-  emission_file_one=$3
-  emission_file_two=$4
-  output_file=$5
+  bin_size=$3
+  output_file_prefix=$4
 
-  shift 5
+  shift 4
   margins=("$@")
   for margin in "${margins[@]}"; do
     Rscript \
-      "${RSCRIPT_DIRECTORY}/spatial_similarity.R" \
+      "${RSCRIPT_DIRECTORY}/add_margins.R" \
       "${state_assignment_file_one}" \
-      "${state_assignment_file_two}" \
-      "${emission_file_one}" \
-      "${emission_file_two}" \
       "${margin}" \
-      "${output_file}"
+      "${PROCESSING_DIRECTORY}/state_assignments_one_margin_${margin}.bed"
+
+    Rscript \
+      "${RSCRIPT_DIRECTORY}/add_margins.R" \
+      "${state_assignment_file_two}" \
+      "${margin}" \
+      "${PROCESSING_DIRECTORY}/state_assignments_two_margin_${margin}.bed"
+
+    bedtools intersect \
+      -wo \
+      -a "${PROCESSING_DIRECTORY}/state_assignments_one_margin_${margin}.bed" \
+      -b "${PROCESSING_DIRECTORY}/state_assignments_two_margin_${margin}.bed" | \
+      awk '{OFS="\t"} {print $4,$8,$9}' > \
+      "${PROCESSING_DIRECTORY}/state_assignment_overlap_margin_${margin}.bed"
+
+
+    Rscript \
+      "${RSCRIPT_DIRECTORY}/spatial_similarity.R" \
+      "${PROCESSING_DIRECTORY}/state_assignment_overlap_margin_${margin}.bed" \
+      "${bin_size}" \
+      "${output_file_prefix}${margin}.txt"
   done
 }
 
@@ -111,7 +168,9 @@ main() {
   source_config_file "${config_file_location}"
   move_log_files
 
-  mkdir "${OUTPUT_DIRECTORY}/similarity_scores"
+  mkdir -p \
+    "${OUTPUT_DIRECTORY}/similarity_scores" \
+    "${PROCESSING_DIRECTORY}"
 
   emission_similarities_file="${PROCESSING_DIRECTORY}/similarity_scores/emission_similarity.txt"
   run_emission_similarity \
@@ -119,26 +178,38 @@ main() {
     "${MODEL_TWO_EMISSIONS_FILE}" \
     "${emission_similarities_file}"
 
+  create_blank_bins \
+    "${MODEL_ONE_STATE_ASSIGNMENTS_FILE}" \
+    "${BIN_SIZE}" \
+    "${CHROMOSOME_SIZES_FILE}" \
+    "${PROCESSING_DIRECTORY}/sorted_blank_bins.bed"
+
+  convert_state_assignments \
+    "${PROCESSING_DIRECTORY}/sorted_blank_bins.bed" \
+    "${MODEL_ONE_STATE_ASSIGNMENTS_FILE}" \
+    "${PROCESSING_DIRECTORY}/state_assignments_model_one.bed"
+  convert_state_assignments \
+    "${PROCESSING_DIRECTORY}/sorted_blank_bins.bed" \
+    "${MODEL_TWO_STATE_ASSIGNMENTS_FILE}" \
+    "${PROCESSING_DIRECTORY}/state_assignments_model_two.bed"
+
   margins=(0 "${BIN_SIZE}" $((BIN_SIZE * 10)))
-  state_assignments_similarity_file="${PROCESSING_DIRECTORY}/similarity_scores/state_assignment_similarity.txt"
+  state_assignments_similarity_file_prefix="${PROCESSING_DIRECTORY}/similarity_scores/state_assignment_similarity_margin_"
   run_spatial_similarity \
-    "${MODEL_ONE_STATE_ASSIGNMENTS_FILE}" \
-    "${MODEL_ONE_STATE_ASSIGNMENTS_FILE}" \
-    "${MODEL_ONE_EMISSIONS_FILE}" \
-    "${MODEL_TWO_EMISSIONS_FILE}" \
-    "${state_assignments_similarity_file}" \
+    "${PROCESSING_DIRECTORY}/state_assignments_model_one.bed"
+    "${PROCESSING_DIRECTORY}/state_assignments_model_two.bed"
+    "${BIN_SIZE}" \
+    "${state_assignments_similarity_file_prefix}" \
     "${margins[@]}"
 
   combined_similarity_score_file="${OUTPUT_DIRECTORY}/similarity_scores.txt"
   combine_similarity_scores \
     "${emission_similarities_file}" \
-    "${state_assignments_similarity_file}" \
     "${combined_similarity_score_file}"
 
   if [[ "${DEBUG_MODE}" -eq 1 ]]; then
     clean_up \
-      "${emission_similarities_file}" \
-      "${state_assignments_similarity_file}"
+      "${emission_similarities_file}"
   fi
 }
 
