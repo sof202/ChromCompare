@@ -115,10 +115,10 @@ main <- function(combined_assignments_file, bin_size, output_file_path) {
   )
   model_one_stats_table <-
     find_states_assigned(combined_assignments[["model_one"]]) |>
-    add_bp_coverage(combined_assignments, bin_size)
+    add_bp_coverage(combined_assignments[["model_one"]], bin_size)
   model_two_stats_table <-
     find_states_assigned(combined_assignments[["model_two"]]) |>
-    add_bp_coverage(combined_assignments, bin_size)
+    add_bp_coverage(combined_assignments[["model_two"]], bin_size)
   stats_table <- merge_stats_tables(
     model_one_stats_table,
     model_two_stats_table
