@@ -111,7 +111,7 @@ save_matrix <- function(matrix, file_path) {
 main <- function(combined_assignments_file, bin_size, output_file_path) {
   combined_assignments <- data.table::fread(
     combined_assignments_file,
-    colnames = c("model_one", "model_two", "overlap")
+    col.names = c("model_one", "model_two", "overlap")
   )
   model_one_stats_table <-
     find_states_assigned(combined_assignments[["model_one"]]) |>
