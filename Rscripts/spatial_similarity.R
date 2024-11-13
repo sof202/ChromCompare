@@ -47,7 +47,11 @@ add_bp_overlap <- function(stats_table, combined_assignments) {
       bp_overlap = sum(overlap, na.rm = TRUE),
       .groups = "drop"
     ) |>
-    data.table::as.data.table()
+    data.table::as.data.table() |>
+    dplyr::left_join(
+      stats_table,
+      by = c("state_one" = "state_one", "state_two" = "state_two")
+    )
   return(stats_table)
 }
 
