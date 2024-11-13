@@ -88,8 +88,8 @@ create_fold_enrichment_matrix <- function(stats_table) {
       names_from = state_two,
       values_from = fold_enrichment
     ) |>
-    data.table::as.data.table() |>
-    as.matrix(rownames = "state_one")
+    dplyr::select(-state_one) |>
+    as.matrix()
   return(fold_enrichment_matrix)
 }
 
