@@ -109,9 +109,7 @@ run_spatial_similarity() {
   state_assignment_file_two=$2
   output_file_prefix=$3
 
-  shift 3
-  margins=("$@")
-  for margin in "${margins[@]}"; do
+  for margin in "${MARGINS[@]}"; do
     Rscript \
       "${RSCRIPT_DIRECTORY}/add_margins.R" \
       "${state_assignment_file_one}" \
@@ -147,13 +145,16 @@ combine_similarity_scores() {
 
   spatial_similarities_files=$( \
     find "${PROCESSING_DIRECTORY}" \
-    -name "${spatial_similarities_prefix}*.txt" \
+    -name "${spatial_similarities_prefix}*.txt" | \
+    tr '\n' ',' | \
+    sed 's/,$//'
   )
   
   Rscript \
     "${RSCRIPT_DIRECTORY}/combine_similiarity_scores.R" \
     "${emission_similarities_file}" \
     "${spatial_similarities_files}" \
+    "${WEIGHTS}" \
     "${output_file}"
 }
 
@@ -193,13 +194,11 @@ main() {
     "${MODEL_TWO_STATE_ASSIGNMENTS_FILE}" \
     "${PROCESSING_DIRECTORY}/state_assignments_model_two.bed"
 
-  margins=(0 "${BIN_SIZE}" $((BIN_SIZE * 10)))
   state_assignments_similarity_file_prefix="${PROCESSING_DIRECTORY}/similarity_scores/state_assignment_similarity_margin_"
   run_spatial_similarity \
     "${PROCESSING_DIRECTORY}/state_assignments_model_one.bed"
     "${PROCESSING_DIRECTORY}/state_assignments_model_two.bed"
-    "${state_assignments_similarity_file_prefix}" \
-    "${margins[@]}"
+    "${state_assignments_similarity_file_prefix}"
 
   combined_similarity_score_file="${OUTPUT_DIRECTORY}/similarity_scores.txt"
   combine_similarity_scores \
