@@ -67,15 +67,13 @@ run_emission_similarity() {
 
 create_blank_bins() {
   state_assignment_file_one=$1
-  bin_size=$2
-  chromosome_sizes_file=$3
-  output_file=$4
+  output_file=$2
 
   Rscript \
     "${RSCRIPT_DIRECTORY}/create_blank_bed_file" \
-    "${bin_size}" \
+    "${BIN_SIZE}" \
     "${state_assignment_file_one}" \
-    "${chromosome_sizes_file}" \
+    "${CHROMOSOME_SIZES_FILE}" \
     "${PROCESSING_DIRECTORY}/blank_bins.bed"
 
   # Sorting required for later bedtools intersect. The output of the Rscript is
@@ -109,10 +107,9 @@ convert_state_assignments() {
 run_spatial_similarity() {
   state_assignment_file_one=$1
   state_assignment_file_two=$2
-  bin_size=$3
-  output_file_prefix=$4
+  output_file_prefix=$3
 
-  shift 4
+  shift 3
   margins=("$@")
   for margin in "${margins[@]}"; do
     Rscript \
@@ -138,7 +135,7 @@ run_spatial_similarity() {
     Rscript \
       "${RSCRIPT_DIRECTORY}/spatial_similarity.R" \
       "${PROCESSING_DIRECTORY}/state_assignment_overlap_margin_${margin}.bed" \
-      "${bin_size}" \
+      "${BIN_SIZE}" \
       "${PROCESSING_DIRECTORY}/${output_file_prefix}${margin}.txt"
   done
 }
@@ -185,8 +182,6 @@ main() {
 
   create_blank_bins \
     "${MODEL_ONE_STATE_ASSIGNMENTS_FILE}" \
-    "${BIN_SIZE}" \
-    "${CHROMOSOME_SIZES_FILE}" \
     "${PROCESSING_DIRECTORY}/sorted_blank_bins.bed"
 
   convert_state_assignments \
@@ -203,7 +198,6 @@ main() {
   run_spatial_similarity \
     "${PROCESSING_DIRECTORY}/state_assignments_model_one.bed"
     "${PROCESSING_DIRECTORY}/state_assignments_model_two.bed"
-    "${BIN_SIZE}" \
     "${state_assignments_similarity_file_prefix}" \
     "${margins[@]}"
 
