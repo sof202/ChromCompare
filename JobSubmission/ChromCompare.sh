@@ -139,19 +139,24 @@ run_spatial_similarity() {
       "${RSCRIPT_DIRECTORY}/spatial_similarity.R" \
       "${PROCESSING_DIRECTORY}/state_assignment_overlap_margin_${margin}.bed" \
       "${bin_size}" \
-      "${output_file_prefix}${margin}.txt"
+      "${PROCESSING_DIRECTORY}/${output_file_prefix}${margin}.txt"
   done
 }
 
 combine_similarity_scores() {
   emission_similarities_file=$1
-  state_assignments_similarities_file=$2
+  spatial_similarities_prefix=$2
   output_file=$3
+
+  spatial_similarities_files=$( \
+    find "${PROCESSING_DIRECTORY}" \
+    -name "${spatial_similarities_prefix}*.txt" \
+  )
   
   Rscript \
     "${RSCRIPT_DIRECTORY}/combine_similiarity_scores.R" \
     "${emission_similarities_file}" \
-    "${state_assignments_similarities_file}" \
+    "${spatial_similarities_files}" \
     "${output_file}"
 }
 
@@ -205,6 +210,7 @@ main() {
   combined_similarity_score_file="${OUTPUT_DIRECTORY}/similarity_scores.txt"
   combine_similarity_scores \
     "${emission_similarities_file}" \
+    "${state_assignments_similarity_file_prefix}" \
     "${combined_similarity_score_file}"
 
   if [[ "${DEBUG_MODE}" -eq 1 ]]; then
