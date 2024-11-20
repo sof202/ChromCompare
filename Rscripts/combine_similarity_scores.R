@@ -70,12 +70,12 @@ get_likely_state_pairs <- function(similarity_scores) {
   return(likely_state_pairs)
 }
 
-save_file <- function(data, output_file_path) {
+save_file <- function(data, output_file_path, header) {
   write.table(
     data,
     file = output_file_path,
     sep = ",",
-    col.names = TRUE,
+    col.names = header,
     row.names = FALSE,
     quote = FALSE
   )
@@ -108,11 +108,13 @@ main <- function(emission_similarities_file,
   likely_state_pairs <- get_likely_state_pairs(combined_matrix)
   save_file(
     likely_state_pairs,
-    file.path(output_file_path, "likely_state_pairs.txt")
+    file.path(output_file_path, "likely_state_pairs.txt"),
+    header = TRUE
   )
   save_file(
     combined_matrix,
-    file.path(output_file_path, "similarity_scores.txt")
+    file.path(output_file_path, "similarity_scores.txt"),
+    header = FALSE
   )
 }
 
