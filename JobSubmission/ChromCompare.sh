@@ -141,7 +141,6 @@ run_spatial_similarity() {
 combine_similarity_scores() {
   emission_similarities_file=$1
   spatial_similarities_prefix=$2
-  output_file=$3
 
   spatial_similarities_files=$( \
     find "${PROCESSING_DIRECTORY}" \
@@ -155,7 +154,7 @@ combine_similarity_scores() {
     "${emission_similarities_file}" \
     "${spatial_similarities_files}" \
     "${WEIGHTS}" \
-    "${output_file}"
+    "${OUTPUT_DIRECTORY}"
 }
 
 clean_up() {
@@ -172,7 +171,7 @@ main() {
   move_log_files
 
   mkdir -p \
-    "${OUTPUT_DIRECTORY}/similarity_scores" \
+    "${OUTPUT_DIRECTORY}" \
     "${PROCESSING_DIRECTORY}"
 
   emission_similarities_file="${PROCESSING_DIRECTORY}/similarity_scores/emission_similarity.txt"
@@ -200,11 +199,9 @@ main() {
     "${PROCESSING_DIRECTORY}/state_assignments_model_two.bed"
     "${state_assignments_similarity_file_prefix}"
 
-  combined_similarity_score_file="${OUTPUT_DIRECTORY}/similarity_scores.txt"
   combine_similarity_scores \
     "${emission_similarities_file}" \
-    "${state_assignments_similarity_file_prefix}" \
-    "${combined_similarity_score_file}"
+    "${state_assignments_similarity_file_prefix}"
 
   if [[ "${DEBUG_MODE}" -eq 1 ]]; then
     clean_up \
