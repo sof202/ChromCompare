@@ -1,3 +1,14 @@
+read_matrix <- function(file_path) {
+  matrix <- data.table::fread(
+    file_path,
+    sep = ",",
+    header = TRUE
+  )
+  matrix <- as.matrix(matrix, rownames = seq_len(nrow(matrix)))
+  return(matrix)
+}
+
+
 main <- function(emission_similarities_file,
                  spatial_similarities_file_list,
                  weights,
