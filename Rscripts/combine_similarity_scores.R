@@ -25,6 +25,13 @@ calculate_emission_score <- function(distance,
 
 generate_emission_similarities <- function(emission_similarities,
                                            max_fold_enrichment) {
+  # The emissions matrix read in contains Euclidean distances. Here, a smaller
+  # number signifies higher similarity. However, with the spatial
+  # similarities, a higher fold enrichment signifies higher similarity. In
+  # order to make these two types of similarity comparable, a basic scalar
+  # transform is used. This ensures that low Euclidean distances are converted
+  # to scores comparable to the highest spatial similarity scores, whilst high
+  # Euclidean distances are converted to values close to zero.
   max_euclidean_distance <- max(emission_similarities)
   emission_similarity_scores <- apply(
     emission_similarities,
