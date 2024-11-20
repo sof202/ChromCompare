@@ -70,10 +70,9 @@ get_likely_state_pairs <- function(similarity_scores) {
   return(likely_state_pairs)
 }
 
-save_likely_state_pairs <- function(likely_state_pairs, output_file_path) {
-  output_file_path <- file.path(output_file_path, "likely_state_pairs.txt")
+save_file <- function(data, output_file_path) {
   write.table(
-    likely_state_pairs,
+    data,
     file = output_file_path,
     sep = ",",
     col.names = TRUE,
@@ -107,15 +106,21 @@ main <- function(emission_similarities_file,
     weights
   )
   likely_state_pairs <- get_likely_state_pairs(combined_matrix)
-  save_likely_state_pairs(likely_state_pairs)
-  save_matrix(combined_matrix)
+  save_file(
+    likely_state_pairs,
+    file.path(output_file_path, "likely_state_pairs.txt")
+  )
+  save_file(
+    combined_matrix,
+    file.path(output_file_path, "similarity_scores.txt")
+  )
 }
 
 args <- commandArgs(trailingOnly = TRUE)
 emission_similarities_file <- args[[1]]
 spatial_similarities_files <- unlist(strsplit(args[[2]], ","))
 weights <- as.numeric(unlist(strsplit(args[[3]], ",")))
-output_file <- args[[4]]
+output_file_path <- args[[4]]
 
 main(
   emission_similarities_file,
