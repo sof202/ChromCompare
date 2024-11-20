@@ -43,6 +43,16 @@ generate_emission_similarities <- function(emission_similarities,
   return(emission_similarity_scores)
 }
 
+combine_similarity_matrices <- function(matrix_list, weights) {
+  stopifnot(length(matrix_list) == length(weights))
+
+  # Faster to do this than initialise matrix with proper size and names
+  combined_matrix <- matrix_list[[1]] * 0
+  for (i in seq_along(matrix_list)) {
+    combined_matrix <- combined_matrix + weights[[i]] * matrix_list[[i]]
+  }
+  return(combined_matrix)
+}
 
 main <- function(emission_similarities_file,
                  spatial_similarities_file_list,
