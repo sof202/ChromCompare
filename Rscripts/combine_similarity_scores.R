@@ -98,7 +98,7 @@ main <- function(emission_similarities_file,
     max_fold_enrichment
   )
   all_similarity_matrices <- append(
-    emission_similarities,
+    list(emission_similarities),
     spatial_similarities
   )
   combined_matrix <- combine_similarity_matrices(
