@@ -54,6 +54,34 @@ combine_similarity_matrices <- function(matrix_list, weights) {
   return(combined_matrix)
 }
 
+get_likely_state_pairs <- function(similarity_scores) {
+  likely_state_pairs <- apply(
+    similarity_scores,
+    2,
+    function(row) {
+      which(similarity_scores == max(row), arr.ind = TRUE)
+    }
+  )
+
+  # Makes the resultant matrix in a more readable fashion
+  likely_state_pairs <- t(likely_state_pairs)
+  colnames(likely_state_pairs) <- c("model_one_state", "model_two_state")
+
+  return(likely_state_pairs)
+}
+
+save_likely_state_pairs <- function(likely_state_pairs, output_file_path) {
+  output_file_path <- file.path(output_file_path, "likely_state_pairs.txt")
+  write.table(
+    likely_state_pairs,
+    file = output_file_path,
+    sep = ",",
+    col.names = TRUE,
+    row.names = FALSE,
+    quote = FALSE
+  )
+}
+
 main <- function(emission_similarities_file,
                  spatial_similarities_files,
                  weights,
@@ -78,7 +106,8 @@ main <- function(emission_similarities_file,
     all_similarity_matrices,
     weights
   )
-  print_likely_state_pairs(combined_matrix)
+  likely_state_pairs <- get_likely_state_pairs(combined_matrix)
+  save_likely_state_pairs(likely_state_pairs)
   save_matrix(combined_matrix)
 }
 
