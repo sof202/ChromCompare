@@ -89,10 +89,10 @@ create_fold_enrichment_matrix <- function(stats_table) {
   fold_enrichment_matrix <- stats_table |>
     dplyr::select(state_one, state_two, fold_enrichment) |>
     tidyr::pivot_wider(
-      names_from = state_two,
+      names_from = state_one,
       values_from = fold_enrichment
     ) |>
-    dplyr::select(-state_one) |>
+    dplyr::select(-state_two) |>
     as.matrix()
   return(fold_enrichment_matrix)
 }
