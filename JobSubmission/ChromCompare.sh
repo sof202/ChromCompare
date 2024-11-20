@@ -67,15 +67,13 @@ run_emission_similarity() {
 
 create_blank_bins() {
   state_assignment_file_one=$1
-  bin_size=$2
-  chromosome_sizes_file=$3
-  output_file=$4
+  output_file=$2
 
   Rscript \
     "${RSCRIPT_DIRECTORY}/create_blank_bed_file" \
-    "${bin_size}" \
+    "${BIN_SIZE}" \
     "${state_assignment_file_one}" \
-    "${chromosome_sizes_file}" \
+    "${CHROMOSOME_SIZES_FILE}" \
     "${PROCESSING_DIRECTORY}/blank_bins.bed"
 
   # Sorting required for later bedtools intersect. The output of the Rscript is
@@ -109,12 +107,9 @@ convert_state_assignments() {
 run_spatial_similarity() {
   state_assignment_file_one=$1
   state_assignment_file_two=$2
-  bin_size=$3
-  output_file_prefix=$4
+  output_file_prefix=$3
 
-  shift 4
-  margins=("$@")
-  for margin in "${margins[@]}"; do
+  for margin in "${MARGINS[@]}"; do
     Rscript \
       "${RSCRIPT_DIRECTORY}/add_margins.R" \
       "${state_assignment_file_one}" \
@@ -138,21 +133,28 @@ run_spatial_similarity() {
     Rscript \
       "${RSCRIPT_DIRECTORY}/spatial_similarity.R" \
       "${PROCESSING_DIRECTORY}/state_assignment_overlap_margin_${margin}.bed" \
-      "${bin_size}" \
-      "${output_file_prefix}${margin}.txt"
+      "${BIN_SIZE}" \
+      "${PROCESSING_DIRECTORY}/${output_file_prefix}${margin}.txt"
   done
 }
 
 combine_similarity_scores() {
   emission_similarities_file=$1
-  state_assignments_similarities_file=$2
-  output_file=$3
+  spatial_similarities_prefix=$2
+
+  spatial_similarities_files=$( \
+    find "${PROCESSING_DIRECTORY}" \
+    -name "${spatial_similarities_prefix}*.txt" | \
+    tr '\n' ',' | \
+    sed 's/,$//'
+  )
   
   Rscript \
     "${RSCRIPT_DIRECTORY}/combine_similiarity_scores.R" \
     "${emission_similarities_file}" \
-    "${state_assignments_similarities_file}" \
-    "${output_file}"
+    "${spatial_similarities_files}" \
+    "${WEIGHTS}" \
+    "${OUTPUT_DIRECTORY}"
 }
 
 clean_up() {
@@ -169,7 +171,7 @@ main() {
   move_log_files
 
   mkdir -p \
-    "${OUTPUT_DIRECTORY}/similarity_scores" \
+    "${OUTPUT_DIRECTORY}" \
     "${PROCESSING_DIRECTORY}"
 
   emission_similarities_file="${PROCESSING_DIRECTORY}/similarity_scores/emission_similarity.txt"
@@ -180,8 +182,6 @@ main() {
 
   create_blank_bins \
     "${MODEL_ONE_STATE_ASSIGNMENTS_FILE}" \
-    "${BIN_SIZE}" \
-    "${CHROMOSOME_SIZES_FILE}" \
     "${PROCESSING_DIRECTORY}/sorted_blank_bins.bed"
 
   convert_state_assignments \
@@ -193,19 +193,15 @@ main() {
     "${MODEL_TWO_STATE_ASSIGNMENTS_FILE}" \
     "${PROCESSING_DIRECTORY}/state_assignments_model_two.bed"
 
-  margins=(0 "${BIN_SIZE}" $((BIN_SIZE * 10)))
   state_assignments_similarity_file_prefix="${PROCESSING_DIRECTORY}/similarity_scores/state_assignment_similarity_margin_"
   run_spatial_similarity \
     "${PROCESSING_DIRECTORY}/state_assignments_model_one.bed"
     "${PROCESSING_DIRECTORY}/state_assignments_model_two.bed"
-    "${BIN_SIZE}" \
-    "${state_assignments_similarity_file_prefix}" \
-    "${margins[@]}"
+    "${state_assignments_similarity_file_prefix}"
 
-  combined_similarity_score_file="${OUTPUT_DIRECTORY}/similarity_scores.txt"
   combine_similarity_scores \
     "${emission_similarities_file}" \
-    "${combined_similarity_score_file}"
+    "${state_assignments_similarity_file_prefix}"
 
   if [[ "${DEBUG_MODE}" -eq 1 ]]; then
     clean_up \
