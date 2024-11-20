@@ -64,7 +64,7 @@ get_likely_state_pairs <- function(similarity_scores) {
   )
 
   # Makes the resultant matrix in a more readable fashion
-  likely_state_pairs <- t(likely_state_pairs)
+  likely_state_pairs <- t(likely_state_pairs)[, c(2, 1)]
   colnames(likely_state_pairs) <- c("model_one_state", "model_two_state")
 
   return(likely_state_pairs)
