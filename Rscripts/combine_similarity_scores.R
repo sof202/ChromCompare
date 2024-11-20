@@ -55,12 +55,12 @@ combine_similarity_matrices <- function(matrix_list, weights) {
 }
 
 main <- function(emission_similarities_file,
-                 spatial_similarities_file_list,
+                 spatial_similarities_files,
                  weights,
                  output_file_path) {
   emission_distances <- read_matrix(emission_similarities_file)
   spatial_similarities <- lapply(
-    spatial_similarities_file_list,
+    spatial_similarities_files,
     function(file_path) {
       read_matrix(file_path)
     }
@@ -84,13 +84,13 @@ main <- function(emission_similarities_file,
 
 args <- commandArgs(trailingOnly = TRUE)
 emission_similarities_file <- args[[1]]
-spatial_similarities_file_list <- unlist(strsplit(args[[2]], ","))
+spatial_similarities_files <- unlist(strsplit(args[[2]], ","))
 weights <- as.numeric(unlist(strsplit(args[[3]], ",")))
 output_file <- args[[4]]
 
 main(
   emission_similarities_file,
-  spatial_similarities_file_list,
+  spatial_similarities_files,
   weights,
   output_file_path
 )
