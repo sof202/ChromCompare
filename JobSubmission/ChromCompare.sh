@@ -218,4 +218,8 @@ main() {
 }
 
 if [[ $# -ne 1 ]]; then usage; fi
+if [[ -z "${SLURM_JOB_ID}" ]]; then
+  echo "You must run this script under SLURM using sbatch."
+  exit 1
+fi
 main "$1"
