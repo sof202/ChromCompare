@@ -30,6 +30,9 @@ def get_config_variables(file_path: str) -> dict:
                 continue
             variable, value = line.split("=", 1)
             value = value.strip('"')
+            if value == "":
+                print(f"No value was given for {variable}.")
+                sys.exit(1)
             config_variables[variable] = value
     return config_variables
 
