@@ -19,11 +19,14 @@ DEBUG_MODE=0
 # ----------- #
 
 REPO_DIRECTORY="full/path/to/root/of/this/repo"
-PYTHON_DIRECTORY="${REPO_DIRECTORY}/Python_Scripts"
 RSCRIPT_DIRECTORY="${REPO_DIRECTORY}/Rscripts"
 
 # The similarity matrices (output of the pipeline) will be saved here
 OUTPUT_DIRECTORY="path/to/outputs"
+
+# Intermediate files will be sent here.
+# If you are using DEBUG_MODE, it is recommended you change this.
+PROCESSING_DIRECTORY="/tmp"
 
 # ---------- #
 # PARAMETERS #
@@ -35,12 +38,13 @@ OUTPUT_DIRECTORY="path/to/outputs"
 # minimum bin size of the two models.
 BIN_SIZE=200
 
-# To account for jitters and inaccuracies in ChromHMM, you can add a margin #
-around each state assignment to assist in showing that two states are spatially
-# similar between two models. The default is arbitrary and based off of a bin #
-size of 200. If your bin size is signficantly different, I'd recommend changing
-this. Set this to (0) if you don't want to factor in margins.
-MARGINS=(0 "${BIN_SIZE}" $((BIN_SIZE * 10)))
+# To account for jitters and inaccuracies in ChromHMM, you can add a margin  
+# around each state assignment to assist in showing that two states are 
+# spatially  similar between two models. The default is arbitrary and based 
+# off of a bin   size of 200. If your bin size is signficantly different, I'd 
+# recommend changing  this. Set this to (0) if you don't want to factor in 
+# margins.
+MARGINS=(0 200 400)
 
 # To give certain similarity metrics more weighting in the final calculation,
 # change this variable. Provide a comma separated list where the first value is

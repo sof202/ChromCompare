@@ -29,9 +29,21 @@ MESSAGE
 
 check_config_file() {
   config_file_location=$1
+  script_location=$(\
+    scontrol show job "${SLURM_JOB_ID}" | \
+    grep "Command" | \
+    awk '{print $1}' | \
+    awk 'BEGIN {FS="="} {print $2}' \
+  )
+    cd "$(dirname "${script_location}")" || exit 1
+    cd .. || exit 1
   python \
-    "${PYTHON_DIRECTORY}/check_config_file.py" \
+    "Python_Scripts/check_config_file.py" \
     "${config_file_location}"
+  if [[ $? -eq 1 ]]; then
+    echo "ERROR: malformed config file detected."
+    exit 1
+  fi
 }
 
 
@@ -174,7 +186,7 @@ main() {
     "${OUTPUT_DIRECTORY}" \
     "${PROCESSING_DIRECTORY}"
 
-  emission_similarities_file="${PROCESSING_DIRECTORY}/similarity_scores/emission_similarity.txt"
+  emission_similarities_file="${PROCESSING_DIRECTORY}/emission_similarity.txt"
   run_emission_similarity \
     "${MODEL_ONE_EMISSIONS_FILE}" \
     "${MODEL_TWO_EMISSIONS_FILE}" \
@@ -193,7 +205,7 @@ main() {
     "${MODEL_TWO_STATE_ASSIGNMENTS_FILE}" \
     "${PROCESSING_DIRECTORY}/state_assignments_model_two.bed"
 
-  state_assignments_similarity_file_prefix="${PROCESSING_DIRECTORY}/similarity_scores/state_assignment_similarity_margin_"
+  state_assignments_similarity_file_prefix="${PROCESSING_DIRECTORY}/state_assignment_similarity_margin_"
   run_spatial_similarity \
     "${PROCESSING_DIRECTORY}/state_assignments_model_one.bed"
     "${PROCESSING_DIRECTORY}/state_assignments_model_two.bed"
@@ -210,4 +222,8 @@ main() {
 }
 
 if [[ $# -ne 1 ]]; then usage; fi
+if [[ -z "${SLURM_JOB_ID}" ]]; then
+  echo "You must run this script under SLURM using sbatch."
+  exit 1
+fi
 main "$1"
