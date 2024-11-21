@@ -111,7 +111,7 @@ def is_repo_directory_correct(repo_directory: str) -> bool:
     anchor_file = repo_directory / ".gitignore"
     if not anchor_file.is_file():
         print(
-            "The path given for REPO_DIRECTORY, is incorrect."
+            "The path given for REPO_DIRECTORY, is incorrect. "
             f"Please ensure that {repo_directory} points to this repository."
         )
         return False
@@ -134,7 +134,7 @@ def validate_file_paths(config_variables: dict) -> bool:
         file_path = config_variables[variable]
         if not Path(file_path).is_file():
             print(
-                f"The path given for {variable} doesn't exist",
+                f"The path given for {variable} doesn't exist.",
                 f"Please check this path: {file_path}"
             )
             paths_valid = False
