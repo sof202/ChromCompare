@@ -49,11 +49,16 @@ sbatch .../ChromCompare.sh .../path/to/configuration_file.txt
 ## Required Software
 
 ChromCompare requires the following software in order to run:
+Ensure that these software can be found on your `PATH` environment variable,
+*i.e.* you can run these from the command line directly (for example, `conda
+...`).
 
 - [bash](https://www.gnu.org/software/bash/) (>=4.2.46(2))
 - [SLURM Workload Manager](https://slurm.schedmd.com/overview.html) (>=20.02.3)
-- [R](https://www.r-project.org) (4.4.1)
+- [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html) (>=v23.10.0)
 - [python](https://www.python.org) (>= 3.10.0)
+  - This should be available if you have conda installed.
+
 
 ## Supplementary script
 
