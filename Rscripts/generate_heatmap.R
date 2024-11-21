@@ -1,11 +1,26 @@
+read_matrix <- function(file_path) {
+  matrix <- data.table::fread(
+    file_path,
+    sep = ",",
+    header = TRUE
+  )
+  matrix <- as.matrix(matrix, rownames = seq_len(nrow(matrix)))
+  return(matrix)
+}
+
 main <- function(matrix_file_path, output_file_path) {
   matrix <- read_matrix(matrix_file_path)
   heatmap <- generate_heatmap(matrix)
-  save_heatmap(heatmap)
+  ggsave(
+    output_file_path,
+    heatmap
+  )
 }
 
+library(ggplot2)
 args <- commandArgs(trailingOnly = TRUE)
 matrix_file_path <- args[[1]]
 output_file_path <- args[[2]]
 
+options(bitmapType = "cairo")
 main(matrix_file_path, output_file_path)
