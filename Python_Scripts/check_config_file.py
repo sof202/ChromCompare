@@ -118,5 +118,4 @@ if __name__ == "__main__":
     validate_variable_existence(config_variables)
     if not validate_variable_values(config_variables):
         sys.exit(1)
-    check_number_of_weights(config_variables)
-    print("Config file is valid")
+    sys.exit(0)

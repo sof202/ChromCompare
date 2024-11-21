@@ -40,6 +40,10 @@ check_config_file() {
   python \
     "Python_Scripts/check_config_file.py" \
     "${config_file_location}"
+  if [[ $? -eq 1 ]]; then
+    echo "ERROR: malformed config file detected."
+    exit 1
+  fi
 }
 
 
