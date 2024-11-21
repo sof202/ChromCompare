@@ -74,7 +74,7 @@ def is_positive_integer(x: str) -> bool:
 
 
 def is_bash_array(x: str) -> bool:
-    pattern = r'^\((\$?\{?\w+\}?\s*)+\)$'
+    pattern = r'^\((\d+\s*)+\)$'
     return bool(re.match(pattern, x))
 
 

@@ -40,7 +40,7 @@ BIN_SIZE=200
 # off of a bin   size of 200. If your bin size is signficantly different, I'd 
 # recommend changing  this. Set this to (0) if you don't want to factor in 
 # margins.
-MARGINS=(0 "${BIN_SIZE}" $((BIN_SIZE * 10)))
+MARGINS=(0 200 400)
 
 # To give certain similarity metrics more weighting in the final calculation,
 # change this variable. Provide a comma separated list where the first value is
