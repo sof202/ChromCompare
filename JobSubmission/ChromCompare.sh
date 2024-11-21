@@ -29,8 +29,16 @@ MESSAGE
 
 check_config_file() {
   config_file_location=$1
+  script_location=$(\
+    scontrol show job "${SLURM_JOB_ID}" | \
+    grep "Command" | \
+    awk '{print $1}' | \
+    awk 'BEGIN {FS="="} {print $2}' \
+  )
+    cd "$(dirname "${script_location}")" || exit 1
+    cd .. || exit 1
   python \
-    "${PYTHON_DIRECTORY}/check_config_file.py" \
+    "Python_Scripts/check_config_file.py" \
     "${config_file_location}"
 }
 
