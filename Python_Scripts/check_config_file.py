@@ -21,6 +21,19 @@ def validate_eol_format(file_path: str) -> None:
         sys.exit(1)
 
 
+def get_config_variables(file_path: str) -> dict:
+    config_variables: dict = {}
+    with open(file_path, "r") as config_file:
+        for line in config_file:
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            variable, value = line.split("=", 1)
+            value = value.strip('"')
+            config_variables[variable] = value
+    return config_variables
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         prog="ChromCompare config file checker",
