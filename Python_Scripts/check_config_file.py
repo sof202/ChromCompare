@@ -37,6 +37,33 @@ def get_config_variables(file_path: str) -> dict:
     return config_variables
 
 
+def validate_variable_existence(config_variables: dict) -> None:
+    expected_variables = [
+        "DEBUG_MODE",
+        "REPO_DIRECTORY",
+        "RSCRIPT_DIRECTORY",
+        "OUTPUT_DIRECTORY",
+        "BIN_SIZE",
+        "MARGINS",
+        "WEIGHTS",
+        "MODEL_ONE_EMISSIONS_FILE",
+        "MODEL_ONE_STATE_ASSIGNMENTS_FILE",
+        "MODEL_TWO_EMISSIONS_FILE",
+        "MODEL_TWO_STATE_ASSIGNMENTS_FILE",
+        "CHROMOSOME_SIZES_FILE"
+    ]
+    for variable in expected_variables:
+        variable_missing = False
+        if variable not in config_variables:
+            print(
+                f"{variable} is missing from config file.",
+                "Please check the example config for what is required."
+            )
+            variable_missing = True
+        if variable_missing:
+            sys.exit(1)
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         prog="ChromCompare config file checker",
@@ -46,6 +73,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     validate_eol_format(args.file_path)
     config_variables = get_config_variables(args.file_path)
+    validate_variable_existence(config_variables)
     check_types(config_variables)
     check_file_paths(config_variables)
     check_number_of_weights(config_variables)
