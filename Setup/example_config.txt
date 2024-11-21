@@ -19,7 +19,6 @@ DEBUG_MODE=0
 # ----------- #
 
 REPO_DIRECTORY="full/path/to/root/of/this/repo"
-PYTHON_DIRECTORY="${REPO_DIRECTORY}/Python_Scripts"
 RSCRIPT_DIRECTORY="${REPO_DIRECTORY}/Rscripts"
 
 # The similarity matrices (output of the pipeline) will be saved here
