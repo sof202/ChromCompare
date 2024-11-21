@@ -1,5 +1,7 @@
 import argparse
 import sys
+import re
+from pathlib import Path
 
 
 def validate_eol_format(file_path: str) -> None:
@@ -64,6 +66,46 @@ def validate_variable_existence(config_variables: dict) -> None:
             sys.exit(1)
 
 
+def is_positive_integer(x: str) -> bool:
+    if not x.isdigit():
+        return False
+    x = int(x)
+    return x > 0
+
+
+def is_bash_array(x: str) -> bool:
+    pattern = r'^\((\$?\{?\w+\}?\s*)+\)$'
+    return bool(re.match(pattern, x))
+
+
+def is_comma_separated_floats(x: str) -> bool:
+    values = x.split(",")
+    if len(values) == 1:
+        return False
+    for value in values:
+        try:
+            float(value)
+        except ValueError:
+            return False
+    return True
+
+
+def validate_variable_values(config_variables: dict) -> bool:
+    if config_variables["DEBUG_MODE"] not in ["0", "1"]:
+        print("DEBUG_MODE must be either 0 or 1.")
+        return False
+    if not is_positive_integer(config_variables["BIN_SIZE"]):
+        print("BIN_SIZE must be a positive integer.")
+        return False
+    if not is_bash_array(config_variables["MARGINS"]):
+        print("MARGINS must be a bash array e.g. (x y z)")
+        return False
+    if not is_comma_separated_floats(config_variables["WEIGHTS"]):
+        print("WEIGHTS must be comma separated list of floats e.g. 0.2,0.4,..")
+        return False
+    return True
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         prog="ChromCompare config file checker",
@@ -74,7 +116,7 @@ if __name__ == "__main__":
     validate_eol_format(args.file_path)
     config_variables = get_config_variables(args.file_path)
     validate_variable_existence(config_variables)
-    check_types(config_variables)
-    check_file_paths(config_variables)
+    if not validate_variable_values(config_variables):
+        sys.exit(1)
     check_number_of_weights(config_variables)
     print("Config file is valid")
