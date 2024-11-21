@@ -106,6 +106,41 @@ def validate_variable_values(config_variables: dict) -> bool:
     return True
 
 
+def is_repo_directory_correct(repo_directory: str) -> bool:
+    repo_directory = Path(repo_directory)
+    anchor_file = repo_directory / ".gitignore"
+    if not anchor_file.is_file():
+        print(
+            "The path given for REPO_DIRECTORY, is incorrect."
+            f"Please ensure that {repo_directory} points to this repository."
+        )
+        return False
+    return True
+
+
+def validate_file_paths(config_variables: dict) -> bool:
+    paths_valid = True
+    if not is_repo_directory_correct(config_variables["REPO_DIRECTORY"]):
+        paths_valid = False
+
+    file_path_variables = [
+        "MODEL_ONE_EMISSIONS_FILE",
+        "MODEL_ONE_STATE_ASSIGNMENTS_FILE",
+        "MODEL_TWO_EMISSIONS_FILE",
+        "MODEL_TWO_STATE_ASSIGNMENTS_FILE",
+        "CHROMOSOME_SIZES_FILE"
+    ]
+    for variable in file_path_variables:
+        file_path = config_variables[variable]
+        if not Path(file_path).is_file():
+            print(
+                f"The path given for {variable} doesn't exist",
+                f"Please check this path: {file_path}"
+            )
+            paths_valid = False
+    return paths_valid
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         prog="ChromCompare config file checker",
@@ -117,5 +152,7 @@ if __name__ == "__main__":
     config_variables = get_config_variables(args.file_path)
     validate_variable_existence(config_variables)
     if not validate_variable_values(config_variables):
+        sys.exit(1)
+    if not validate_file_paths(config_variables):
         sys.exit(1)
     sys.exit(0)
