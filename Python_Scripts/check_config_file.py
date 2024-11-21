@@ -106,6 +106,22 @@ def validate_variable_values(config_variables: dict) -> bool:
     return True
 
 
+def validate_weight_margin_compatability(config_variables: dict) -> None:
+    margins = config_variables["MARGINS"].strip("()").split()
+    weights = config_variables["WEIGHTS"].split(",")
+    correct_number_of_weights = len(margins) + 1
+    if correct_number_of_weights != len(weights):
+        print(
+            "The number of weights in WEIGHTS must be:",
+            correct_number_of_weights,
+            "\n",
+            "\bOne for the emission similarity matrix and then one for each",
+            "spatial similarity matrix",
+            "(which corresponds to the size of the MARGINS array)"
+        )
+        sys.exit(1)
+
+
 def is_repo_directory_correct(repo_directory: str) -> bool:
     repo_directory = Path(repo_directory)
     anchor_file = repo_directory / ".gitignore"
@@ -153,6 +169,7 @@ if __name__ == "__main__":
     validate_variable_existence(config_variables)
     if not validate_variable_values(config_variables):
         sys.exit(1)
+    validate_weight_margin_compatability(config_variables)
     if not validate_file_paths(config_variables):
         sys.exit(1)
     sys.exit(0)
