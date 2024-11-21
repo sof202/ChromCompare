@@ -186,7 +186,7 @@ main() {
     "${OUTPUT_DIRECTORY}" \
     "${PROCESSING_DIRECTORY}"
 
-  emission_similarities_file="${PROCESSING_DIRECTORY}/similarity_scores/emission_similarity.txt"
+  emission_similarities_file="${PROCESSING_DIRECTORY}/emission_similarity.txt"
   run_emission_similarity \
     "${MODEL_ONE_EMISSIONS_FILE}" \
     "${MODEL_TWO_EMISSIONS_FILE}" \
@@ -205,7 +205,7 @@ main() {
     "${MODEL_TWO_STATE_ASSIGNMENTS_FILE}" \
     "${PROCESSING_DIRECTORY}/state_assignments_model_two.bed"
 
-  state_assignments_similarity_file_prefix="${PROCESSING_DIRECTORY}/similarity_scores/state_assignment_similarity_margin_"
+  state_assignments_similarity_file_prefix="${PROCESSING_DIRECTORY}/state_assignment_similarity_margin_"
   run_spatial_similarity \
     "${PROCESSING_DIRECTORY}/state_assignments_model_one.bed"
     "${PROCESSING_DIRECTORY}/state_assignments_model_two.bed"

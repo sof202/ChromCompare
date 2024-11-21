@@ -24,6 +24,10 @@ RSCRIPT_DIRECTORY="${REPO_DIRECTORY}/Rscripts"
 # The similarity matrices (output of the pipeline) will be saved here
 OUTPUT_DIRECTORY="path/to/outputs"
 
+# Intermediate files will be sent here.
+# If you are using DEBUG_MODE, it is recommended you change this.
+PROCESSING_DIRECTORY="/tmp"
+
 # ---------- #
 # PARAMETERS #
 # ---------- #

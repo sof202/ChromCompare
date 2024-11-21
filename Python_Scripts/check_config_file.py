@@ -45,6 +45,7 @@ def validate_variable_existence(config_variables: dict) -> None:
         "REPO_DIRECTORY",
         "RSCRIPT_DIRECTORY",
         "OUTPUT_DIRECTORY",
+        "PROCESSING_DIRECTORY",
         "BIN_SIZE",
         "MARGINS",
         "WEIGHTS",
