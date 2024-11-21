@@ -70,30 +70,36 @@ run_emission_similarity() {
   emission_file_one=$1
   emission_file_two=$2
   output_file=$3
+  conda activate ChromCompare-R
   Rscript \
     "${RSCRIPT_DIRECTORY}/emission_similarity.R" \
     "${emission_file_one}" \
     "${emission_file_two}" \
     "${output_file}"
+  conda deactivate
 }
 
 create_blank_bins() {
   state_assignment_file_one=$1
   output_file=$2
 
+  conda activate ChromCompare-R
   Rscript \
     "${RSCRIPT_DIRECTORY}/create_blank_bed_file" \
     "${BIN_SIZE}" \
     "${state_assignment_file_one}" \
     "${CHROMOSOME_SIZES_FILE}" \
     "${PROCESSING_DIRECTORY}/blank_bins.bed"
+  conda deactivate
 
   # Sorting required for later bedtools intersect. The output of the Rscript is
   # most likely sorted alphabetically rather than numerically (for chromosome
   # order)
+  conda activate ChromCompare-bedtools
   bedtools sort -i \
     "${PROCESSING_DIRECTORY}/blank_bins.bed" > \
     "${output_file}"
+  conda deactivate
 
 }
 
@@ -108,12 +114,14 @@ convert_state_assignments() {
   state_assignment_file=$2
   output_file_path=$3
 
+  conda activate ChromCompare-bedtools
   bedtools intersect \
     -wb \
     -a "${sorted_blank_bins_file}" \
     -b "${state_assignment_file}" | \
     awk '{OFS = "\t"} {print $1,$2,$3,$7}' > \
     "${output_file_path}"
+  conda deactivate
 }
 
 run_spatial_similarity() {
@@ -122,6 +130,7 @@ run_spatial_similarity() {
   output_file_prefix=$3
 
   for margin in "${MARGINS[@]}"; do
+    conda activate ChromCompare-R
     Rscript \
       "${RSCRIPT_DIRECTORY}/add_margins.R" \
       "${state_assignment_file_one}" \
@@ -133,20 +142,25 @@ run_spatial_similarity() {
       "${state_assignment_file_two}" \
       "${margin}" \
       "${PROCESSING_DIRECTORY}/state_assignments_two_margin_${margin}.bed"
+    conda deactivate
 
+    conda activate ChromCompare-bedtools
     bedtools intersect \
       -wo \
       -a "${PROCESSING_DIRECTORY}/state_assignments_one_margin_${margin}.bed" \
       -b "${PROCESSING_DIRECTORY}/state_assignments_two_margin_${margin}.bed" | \
       awk '{OFS="\t"} {print $4,$8,$9}' > \
       "${PROCESSING_DIRECTORY}/state_assignment_overlap_margin_${margin}.bed"
+    conda deactivate
 
 
+    conda activate ChromCompare-R
     Rscript \
       "${RSCRIPT_DIRECTORY}/spatial_similarity.R" \
       "${PROCESSING_DIRECTORY}/state_assignment_overlap_margin_${margin}.bed" \
       "${BIN_SIZE}" \
       "${PROCESSING_DIRECTORY}/${output_file_prefix}${margin}.txt"
+    conda deactivate
   done
 }
 
@@ -161,12 +175,14 @@ combine_similarity_scores() {
     sed 's/,$//'
   )
   
+  conda activate ChromCompare-R
   Rscript \
     "${RSCRIPT_DIRECTORY}/combine_similiarity_scores.R" \
     "${emission_similarities_file}" \
     "${spatial_similarities_files}" \
     "${WEIGHTS}" \
     "${OUTPUT_DIRECTORY}"
+  conda deactivate
 }
 
 clean_up() {
@@ -181,6 +197,9 @@ main() {
   check_config_file "${config_file_location}"
   source_config_file "${config_file_location}"
   move_log_files
+
+  # This is so that renv is guaranteed to bootstrap (using the .Rprofile)
+  cd "${RSCRIPT_DIRECTORY}" || exit 1
 
   mkdir -p \
     "${OUTPUT_DIRECTORY}" \

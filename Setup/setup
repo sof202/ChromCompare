@@ -1,0 +1,74 @@
+#!/bin/bash
+
+usage() {
+cat <<EOF
+================================================================================
+$(basename "$0")
+================================================================================
+Purpose: Sets up the conda and renv environments for the scripts to run.
+Also deletes possible unwanted SLURM directives.
+Author: Sam Fletcher
+Contact: s.o.fletcher@exeter.ac.uk
+Dependencies: conda
+================================================================================
+EOF
+    exit 0
+}
+
+if [ "$#" -eq 0 ]; then usage; fi 
+
+REPO_DIR=$(dirname "$0")/..
+
+## =========================== ##
+##   REMOVE SLURM DIRECITVES   ##
+## =========================== ##
+
+script_list=$(find "${REPO_DIR}" -type f -name "*.sh")
+
+echo "Do you want to remove SLURM directives associated with UoE's HPC?"
+echo "(y/n)"
+read -r delete_slurm_directives
+
+if [[ "${delete_slurm_directives}" == "y" ]]; then
+    for file in $script_list; do
+        sed -i "s/#SBATCH -A Research_Project-MRC190311//g" "${file}"
+        sed -i "s/#SBATCH -p mrcq//g" "${file}"
+    done
+fi
+
+## ====================== ##
+##   CONDA ENVIRONMENTS   ##
+## ====================== ##
+
+CONDA_SHELL="${CONDA_EXE%/bin/conda}/etc/profile.d/conda.sh"
+source "${CONDA_SHELL}" || { echo "Could not find conda shell at:
+${CONDA_SHELL}. Please provide the path to this file
+(.../conda/etc/profile.d/conda.sh"; }
+
+read -r CONDA_SHELL
+source "${CONDA_SHELL}" || { echo "Could not find conda shell at:
+${CONDA_SHELL}"; exit 1; }
+
+conda config --add channels bioconda
+conda config --add channels conda-forge
+conda config --add channels anaconda
+
+conda create -y --name ChromCompare-R --file "${REPO_DIR}/requirements-R.txt"
+conda create -y --name ChromCompare-bedtools --file "${REPO_DIR}/requirements-bedtools.txt"
+
+conda activate ChromCompare-R
+
+## ==================== ##
+##   RENV ENVIRONMENT   ##
+## ==================== ##
+
+cd "${REPO_DIR}" || exit 1
+Rscript -e "install.packages('renv', repo='https://cloud.r-project.org')"
+
+cd "Rscripts" || exit 1
+if Rscript -e "renv::restore(prompt = FALSE)"; then
+    echo "Install successful"
+else
+    echo "Install unsuccessful. Please create an issue at:"
+    echo "https://github.com/sof202/ChromCompare/issues/new?assignees=&labels=bug&projects=&template=bug-report.yaml&title=%5BBug%5D%3A+"
+fi
