@@ -182,6 +182,9 @@ main() {
   source_config_file "${config_file_location}"
   move_log_files
 
+  # This is so that renv is guaranteed to bootstrap (using the .Rprofile)
+  cd "${RSCRIPT_DIRECTORY}" || exit 1
+
   mkdir -p \
     "${OUTPUT_DIRECTORY}" \
     "${PROCESSING_DIRECTORY}"
