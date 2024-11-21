@@ -205,7 +205,7 @@ main() {
     "${MODEL_TWO_STATE_ASSIGNMENTS_FILE}" \
     "${PROCESSING_DIRECTORY}/state_assignments_model_two.bed"
 
-  state_assignments_similarity_file_prefix="${PROCESSING_DIRECTORY}/state_assignment_similarity_margin_"
+  state_assignments_similarity_file_prefix="state_assignment_similarity_margin_"
   run_spatial_similarity \
     "${PROCESSING_DIRECTORY}/state_assignments_model_one.bed"
     "${PROCESSING_DIRECTORY}/state_assignments_model_two.bed"
@@ -217,7 +217,12 @@ main() {
 
   if [[ "${DEBUG_MODE}" -eq 1 ]]; then
     clean_up \
-      "${emission_similarities_file}"
+      "${emission_similarities_file}" \
+      "${PROCESSING_DIRECTORY}/state_assignments_model_one.bed" \
+      "${PROCESSING_DIRECTORY}/state_assignments_model_two.bed" \
+      "$(find "${PROCESSING_DIRECTORY}" -name "state_assignment")" \
+      "${PROCESSING_DIRECTORY}/sorted_blank_bins.bed" \
+      "${PROCESSING_DIRECTORY}/blank_bins.bed"
   fi
 }
 
