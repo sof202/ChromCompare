@@ -38,17 +38,6 @@ correct_invalid_bounds <- function(state_assignments, chromosome_sizes) {
   return(state_assignments)
 }
 
-save_file <- function(data, file_path) {
-  data.table::fwrite(
-    data,
-    file = file_path,
-    quote = FALSE,
-    sep = "\t",
-    row.names = FALSE,
-    col.names = FALSE
-  )
-}
-
 main <- function(state_assignments_file,
                  margin,
                  chromosome_sizes_file,
@@ -63,7 +52,7 @@ main <- function(state_assignments_file,
     state_assignments,
     chromosome_sizes
   )
-  save_file(state_assignments, output_file_path)
+  save_file(state_assignments, output_file_path, header = FALSE, sep = "\t")
 }
 
 args <- commandArgs(trailingOnly = TRUE)
@@ -73,4 +62,5 @@ chromosome_sizes_file <- args[[3]]
 output_file_path <- args[[4]]
 
 options(scipen = 12)
+source("IO.R")
 main(state_assignments_file, margin, chromosome_sizes_file, output_file_path)
