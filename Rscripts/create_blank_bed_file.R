@@ -26,19 +26,6 @@ create_bins <- function(chromosome_name, chromosome_length, bin_size) {
   return(bins)
 }
 
-
-save_file <- function(data, file_path) {
-  data.table::fwrite(
-    data,
-    file = file_path,
-    quote = FALSE,
-    row.names = FALSE,
-    col.names = FALSE,
-    sep = "\t"
-  )
-}
-
-
 main <- function(bin_size,
                  state_assignments_file,
                  chromosome_sizes_file,
@@ -61,7 +48,7 @@ main <- function(bin_size,
 
   blank_bed_data <- dplyr::bind_rows(blank_bed_data_list)
   print(head(blank_bed_data, 502))
-  save_file(blank_bed_data, output_file_path)
+  save_file(blank_bed_data, output_file_path, header = FALSE, sep = "\t")
 }
 
 args <- commandArgs(trailingOnly = TRUE)
@@ -74,5 +61,5 @@ output_file_path <- args[[4]]
 # This behaviour causes bedtools to crash so we prevent this behaviour from
 # ocurring.
 options(scipen = 12)
-
+source("IO.R")
 main(bin_size, state_assignments_file, chromosome_sizes_file, output_file_path)

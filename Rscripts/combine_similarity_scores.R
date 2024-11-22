@@ -1,13 +1,3 @@
-read_matrix <- function(file_path) {
-  matrix <- data.table::fread(
-    file_path,
-    sep = ",",
-    header = TRUE
-  )
-  matrix <- as.matrix(matrix, rownames = seq_len(nrow(matrix)))
-  return(matrix)
-}
-
 calculate_max_fold_enrichment <- function(spatial_similarities) {
   max_fold_enrichments <- vapply(
     spatial_similarities,
@@ -70,26 +60,15 @@ get_likely_state_pairs <- function(similarity_scores) {
   return(likely_state_pairs)
 }
 
-save_file <- function(data, output_file_path, header) {
-  write.table(
-    data,
-    file = output_file_path,
-    sep = ",",
-    col.names = header,
-    row.names = FALSE,
-    quote = FALSE
-  )
-}
-
 main <- function(emission_similarities_file,
                  spatial_similarities_files,
                  weights,
                  output_file_path) {
-  emission_distances <- read_matrix(emission_similarities_file)
+  emission_distances <- read_as_matrix(emission_similarities_file)
   spatial_similarities <- lapply(
     spatial_similarities_files,
     function(file_path) {
-      read_matrix(file_path)
+      read_as_matrix(file_path)
     }
   )
   max_fold_enrichment <- calculate_max_fold_enrichment(spatial_similarities)
@@ -108,13 +87,11 @@ main <- function(emission_similarities_file,
   likely_state_pairs <- get_likely_state_pairs(combined_matrix)
   save_file(
     likely_state_pairs,
-    file.path(output_file_path, "likely_state_pairs.txt"),
-    header = TRUE
+    file.path(output_file_path, "likely_state_pairs.txt")
   )
   save_file(
     combined_matrix,
-    file.path(output_file_path, "similarity_scores.txt"),
-    header = FALSE
+    file.path(output_file_path, "similarity_scores.txt")
   )
 }
 
@@ -124,6 +101,7 @@ spatial_similarities_files <- unlist(strsplit(args[[2]], ","))
 weights <- as.numeric(unlist(strsplit(args[[3]], ",")))
 output_file_path <- args[[4]]
 
+source("IO.R")
 main(
   emission_similarities_file,
   spatial_similarities_files,

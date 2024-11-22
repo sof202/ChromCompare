@@ -27,17 +27,6 @@ create_distances_matrix <- function(emissions_one, emissions_two) {
   return(distances_matrix)
 }
 
-save_file <- function(matrix, file_path) {
-  data.table::fwrite(
-    matrix,
-    file = file_path,
-    quote = FALSE,
-    row.names = FALSE,
-    col.names = TRUE,
-    sep = ","
-  )
-}
-
 main <- function(emission_file_one, emission_file_two, output_file) {
   emissions_one <- data.table::fread(emission_file_one)
   emissions_two <- data.table::fread(emission_file_two)
@@ -63,4 +52,5 @@ emission_file_one <- args[[1]]
 emission_file_two <- args[[2]]
 output_file_path <- args[[3]]
 
+source("IO.R")
 main(emission_file_one, emission_file_two, output_file_path)

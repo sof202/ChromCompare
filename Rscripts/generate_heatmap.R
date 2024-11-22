@@ -1,12 +1,3 @@
-read_matrix <- function(file_path) {
-  matrix <- data.table::fread(
-    file_path,
-    sep = ",",
-    header = TRUE
-  )
-  return(matrix)
-}
-
 reshape_data <- function(data) {
   # Data needs to be reshaped in order to be in the form that will work with
   # ggplot
@@ -41,7 +32,7 @@ generate_heatmap <- function(data) {
 }
 
 main <- function(matrix_file_path, output_file_path) {
-  matrix <- read_matrix(matrix_file_path)
+  matrix <- read_as_data_table(matrix_file_path)
   data <- reshape_data(matrix)
   heatmap <- generate_heatmap(data)
   ggsave(
@@ -56,4 +47,5 @@ matrix_file_path <- args[[1]]
 output_file_path <- args[[2]]
 
 options(bitmapType = "cairo")
+source("IO.R")
 main(matrix_file_path, output_file_path)
