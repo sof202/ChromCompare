@@ -15,7 +15,7 @@ EOF
     exit 0
 }
 
-if [ "$#" -eq 0 ]; then usage; fi 
+if [[ $1 == "-h" || $1 == "--help" ]]; then usage; fi 
 
 REPO_DIR=$(dirname "$0")/..
 
@@ -43,9 +43,8 @@ fi
 CONDA_SHELL="${CONDA_EXE%/bin/conda}/etc/profile.d/conda.sh"
 source "${CONDA_SHELL}" || { echo "Could not find conda shell at:
 ${CONDA_SHELL}. Please provide the path to this file
-(.../conda/etc/profile.d/conda.sh"; }
+(.../conda/etc/profile.d/conda.sh"; read -r CONDA_SHELL; }
 
-read -r CONDA_SHELL
 source "${CONDA_SHELL}" || { echo "Could not find conda shell at:
 ${CONDA_SHELL}"; exit 1; }
 
