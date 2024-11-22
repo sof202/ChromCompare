@@ -47,7 +47,6 @@ main <- function(bin_size,
   })
 
   blank_bed_data <- dplyr::bind_rows(blank_bed_data_list)
-  print(head(blank_bed_data, 502))
   save_file(blank_bed_data, output_file_path, header = FALSE, sep = "\t")
 }
 
