@@ -15,7 +15,7 @@ EOF
     exit 0
 }
 
-if [ "$#" -eq 0 ]; then usage; fi 
+if [[ $1 == "-h" || $1 == "--help" ]]; then usage; fi 
 
 REPO_DIR=$(dirname "$0")/..
 
