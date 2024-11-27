@@ -232,8 +232,8 @@ main() {
 
   state_assignments_similarity_file_prefix="state_assignment_similarity_margin_"
   run_spatial_similarity \
-    "${PROCESSING_DIRECTORY}/state_assignments_model_one.bed"
-    "${PROCESSING_DIRECTORY}/state_assignments_model_two.bed"
+    "${PROCESSING_DIRECTORY}/state_assignments_model_one.bed" \
+    "${PROCESSING_DIRECTORY}/state_assignments_model_two.bed" \
     "${state_assignments_similarity_file_prefix}"
 
   combine_similarity_scores \
