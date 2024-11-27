@@ -238,7 +238,7 @@ main() {
     "${emission_similarities_file}" \
     "${state_assignments_similarity_file_prefix}"
 
-  if [[ "${DEBUG_MODE}" -eq 1 ]]; then
+  if [[ "${DEBUG_MODE}" -eq 0 ]]; then
     clean_up \
       "${emission_similarities_file}" \
       "${PROCESSING_DIRECTORY}/state_assignments_model_one.bed" \
