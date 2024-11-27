@@ -152,9 +152,15 @@ run_spatial_similarity() {
       -a "${PROCESSING_DIRECTORY}/state_assignments_one_margin_${margin}.bed" \
       -b "${PROCESSING_DIRECTORY}/state_assignments_two_margin_${margin}.bed" | \
       awk '{OFS="\t"} {print $4,$8,$9}' > \
-      "${PROCESSING_DIRECTORY}/state_assignment_overlap_margin_${margin}.bed"
+      "${PROCESSING_DIRECTORY}/state_assignment_overlap_margin_${margin}.bed.temp"
     conda deactivate
 
+    # ChromHMM annoyingly puts an E before state numbers in the state
+    # assignment files. This removes them
+    sed 's/E//g' \
+      "${PROCESSING_DIRECTORY}/state_assignment_overlap_margin_${margin}.bed.temp" > \
+      "${PROCESSING_DIRECTORY}/state_assignment_overlap_margin_${margin}.bed"
+    rm "${PROCESSING_DIRECTORY}/state_assignment_overlap_margin_${margin}.bed.temp"
 
     conda activate ChromCompare-R
     Rscript \
