@@ -135,12 +135,14 @@ run_spatial_similarity() {
       "${RSCRIPT_DIRECTORY}/add_margins.R" \
       "${state_assignment_file_one}" \
       "${margin}" \
+      "${CHROMOSOME_SIZES_FILE}" \
       "${PROCESSING_DIRECTORY}/state_assignments_one_margin_${margin}.bed"
 
     Rscript \
       "${RSCRIPT_DIRECTORY}/add_margins.R" \
       "${state_assignment_file_two}" \
       "${margin}" \
+      "${CHROMOSOME_SIZES_FILE}" \
       "${PROCESSING_DIRECTORY}/state_assignments_two_margin_${margin}.bed"
     conda deactivate
 
