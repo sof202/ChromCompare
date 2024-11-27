@@ -49,9 +49,9 @@ check_config_file() {
 
 source_config_file() {
   config_file_location=$1
-  source "${config_file_location}" | \
-    { >&2 echo "Config file does not exist in specified location ($1)."
-      exit 1; }
+  source "${config_file_location}" || \
+    { >&2 echo "Config file does not exist in specified location:" \
+      "${config_file_location}"; exit 1; }
 }
 
 
