@@ -21,6 +21,13 @@ DEBUG_MODE=0
 REPO_DIRECTORY="full/path/to/root/of/this/repo"
 RSCRIPT_DIRECTORY="${REPO_DIRECTORY}/Rscripts"
 
+# For compatability reasons, we ask for the user to add the path to their
+# conda shell here. You should be able to find your conda installation with
+# `echo $CONDA_EXE`, go to the root of this directory, then head to
+# etc/profile.d/conda.sh. Paste the full file path to this shell script into
+# this variable.
+CONDA_SHELL="path/to/conda/etc/profile.d/conda.sh"
+
 # The similarity matrices (output of the pipeline) will be saved here
 OUTPUT_DIRECTORY="path/to/outputs"
 

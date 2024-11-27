@@ -198,6 +198,10 @@ main() {
   source_config_file "${config_file_location}"
   move_log_files
 
+  source "${CONDA_SHELL}" || \
+    { >&2 echo "Conda shell does not exist in specified location:" \
+      "${CONDA_SHELL}. Please check your config file."; exit 1; }
+
   # This is so that renv is guaranteed to bootstrap (using the .Rprofile)
   cd "${RSCRIPT_DIRECTORY}" || exit 1
 
