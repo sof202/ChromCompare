@@ -179,7 +179,7 @@ combine_similarity_scores() {
   
   conda activate ChromCompare-R
   Rscript \
-    "${RSCRIPT_DIRECTORY}/combine_similiarity_scores.R" \
+    "${RSCRIPT_DIRECTORY}/combine_similarity_scores.R" \
     "${emission_similarities_file}" \
     "${spatial_similarities_files}" \
     "${WEIGHTS}" \
