@@ -44,6 +44,7 @@ def validate_variable_existence(config_variables: dict) -> None:
         "DEBUG_MODE",
         "REPO_DIRECTORY",
         "RSCRIPT_DIRECTORY",
+        "CONDA_SHELL",
         "OUTPUT_DIRECTORY",
         "PROCESSING_DIRECTORY",
         "BIN_SIZE",
@@ -141,6 +142,7 @@ def validate_file_paths(config_variables: dict) -> bool:
         paths_valid = False
 
     file_path_variables = [
+        "CONDA_SHELL",
         "MODEL_ONE_EMISSIONS_FILE",
         "MODEL_ONE_STATE_ASSIGNMENTS_FILE",
         "MODEL_TWO_EMISSIONS_FILE",
