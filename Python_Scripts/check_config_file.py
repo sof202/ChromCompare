@@ -125,7 +125,7 @@ def validate_weight_margin_compatability(config_variables: dict) -> None:
 
 def is_repo_directory_correct(repo_directory: str) -> bool:
     repo_directory = Path(repo_directory)
-    anchor_file = repo_directory / ".gitignore"
+    anchor_file = repo_directory / "JobSubmission" / "ChromCompare.sh"
     if not anchor_file.is_file():
         print(
             "The path given for REPO_DIRECTORY, is incorrect. "
