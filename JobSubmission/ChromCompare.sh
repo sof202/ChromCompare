@@ -85,7 +85,7 @@ create_blank_bins() {
 
   conda activate ChromCompare-R
   Rscript \
-    "${RSCRIPT_DIRECTORY}/create_blank_bed_file" \
+    "${RSCRIPT_DIRECTORY}/create_blank_bed_file.R" \
     "${BIN_SIZE}" \
     "${state_assignment_file_one}" \
     "${CHROMOSOME_SIZES_FILE}" \
