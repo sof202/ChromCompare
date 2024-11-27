@@ -59,9 +59,9 @@ move_log_files() {
   log_directory="${OUTPUT_DIRECTORY}/LogFiles/${USER}"
   timestamp=$(date +%d-%h~%H-%M)
   mkdir -p "${log_directory}"
-  mv "ChromCompare_${SLURM_JOB_ID}.log" \
+  mv "${SLURM_SUBMIT_DIR}/ChromCompare_${SLURM_JOB_ID}.log" \
     "${log_directory}/${timestamp}_${SLURM_JOB_ID}_ChromCompare.log"
-  mv "ChromCompare_${SLURM_JOB_ID}.err" \
+  mv "${SLURM_SUBMIT_DIR}/ChromCompare_${SLURM_JOB_ID}.err" \
     "${log_directory}/${timestamp}_${SLURM_JOB_ID}_ChromCompare.err"
 }
 
