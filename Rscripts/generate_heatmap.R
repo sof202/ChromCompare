@@ -44,10 +44,10 @@ generate_heatmap <- function(data, is_emission_matrix) {
   return(heatmap)
 }
 
-main <- function(matrix_file_path, output_file_path) {
+main <- function(matrix_file_path, output_file_path, is_emission_matrix) {
   matrix <- read_as_data_table(matrix_file_path)
   data <- reshape_data(matrix)
-  heatmap <- generate_heatmap(data)
+  heatmap <- generate_heatmap(data, is_emission_matrix)
   ggsave(
     output_file_path,
     heatmap,
