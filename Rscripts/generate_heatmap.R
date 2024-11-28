@@ -8,6 +8,8 @@ reshape_data <- function(data) {
     names_to = "model_one_state",
     values_to = "similarity_score"
   )
+  data[["model_one_state"]] <- as.numeric(data[["model_one_state"]])
+  data[["model_two_state"]] <- as.numeric(data[["model_two_state"]])
   return(data)
 }
 
@@ -23,6 +25,8 @@ generate_heatmap <- function(data) {
       high = "red",
       name = "Similarity score"
     ) +
+    scale_x_continuous(breaks = unique(data[["model_one_state"]])) +
+    scale_y_continuous(breaks = unique(data[["model_two_state"]])) +
     labs(
       x = "State from model one",
       y = "State from model two"
@@ -37,7 +41,9 @@ main <- function(matrix_file_path, output_file_path) {
   heatmap <- generate_heatmap(data)
   ggsave(
     output_file_path,
-    heatmap
+    heatmap,
+    height = 10,
+    width = 10
   )
 }
 
