@@ -68,5 +68,13 @@ you do want to do this, you'll need to run the Rscript `generate_heatmap.R`
 like so:
 
 ```bash
-Rscript .../generate_heatmap.R path/to/matrix path/to/output_file
+Rscript .../generate_heatmap.R path/to/matrix path/to/output_file false
 ```
+
+The third argument here is to let the script know whether or not the supplied
+matrix is for emission parameter similarity. This was implemented because
+a smaller Euclidean distance (emission parameter similarity) implies two
+states are very similar. However, if two states have very high fold enrichment
+(spatial similarity), their score will be very high. The fact that these are
+opposing each other makes the resultant heatmaps harder to quickly interpret
+(as the colours you are looking for are flipped between them).
