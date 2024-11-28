@@ -1,4 +1,14 @@
-# ChromCompare
+<p align="center">
+  <img src="https://github-production-user-asset-6210df.s3.amazonaws.com/147140110/390801423-6aaf45d5-e5c1-4429-9a4e-4499ea676811.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20241128%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20241128T133141Z&X-Amz-Expires=300&X-Amz-Signature=cb7515a4d53f58594ceb7f5a7b283c9cdb1244fa30e1194050d845bf3d89d775&X-Amz-SignedHeaders=host" />
+</p>
+
+</p>
+<p align="center">
+    <a href="https://github.com/sof202/ChromCompare/commits/main/" alt="Commit activity">
+        <img src="https://img.shields.io/github/commit-activity/m/sof202/ChromCompare?style=for-the-badge&color=blue" /></a>
+    <a href="https://github.com/sof202/ChromCompare/blob/main/LICENSE" alt="License">
+        <img src="https://img.shields.io/github/license/sof202/ChromCompare?style=for-the-badge&color=blue" /></a>
+</p>
 
 When generating models with [ChromHMM](https://compbio.mit.edu/ChromHMM/) for
 different cell types (or tissues), one of your goals might be to see which
