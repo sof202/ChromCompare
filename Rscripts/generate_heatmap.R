@@ -13,7 +13,16 @@ reshape_data <- function(data) {
   return(data)
 }
 
-generate_heatmap <- function(data) {
+generate_heatmap <- function(data, is_emission_matrix) {
+  # Emission matrix should be flipped for interpretability. Lower values
+  # means smaller distances which means higher similarity.
+  if (is_emission_matrix) {
+    low <- "red"
+    high <- "white"
+  } else {
+    low <- "white"
+    high <- "red"
+  }
   heatmap <-
     ggplot(
       data,
@@ -21,8 +30,8 @@ generate_heatmap <- function(data) {
     ) +
     geom_tile() +
     scale_fill_gradient(
-      low = "white",
-      high = "red",
+      low = low,
+      high = high,
       name = "Similarity score"
     ) +
     scale_x_continuous(breaks = unique(data[["model_one_state"]])) +
@@ -51,7 +60,8 @@ library(ggplot2)
 args <- commandArgs(trailingOnly = TRUE)
 matrix_file_path <- args[[1]]
 output_file_path <- args[[2]]
+is_emission_matrix <- args[[3]]
 
 options(bitmapType = "cairo")
 source("IO.R")
-main(matrix_file_path, output_file_path)
+main(matrix_file_path, output_file_path, is_emission_matrix)
