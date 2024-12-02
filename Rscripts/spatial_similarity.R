@@ -1,12 +1,24 @@
+process_state_assignments <- function(file) {
+  state_assignments <- data.table::fread(
+    state_assignments_one_file,
+    col.names = c("chr", "start", "end", "state")
+  ) |>
+    dplyr::mutate("size" = end - start) |>
+    dplyr::select(state, size)
+  return(state_assignments)
+}
+
 find_states_assigned <- function(state_assignments) {
   states_present <- unique(state_assignments)
   sorted_states <- sort(states_present)
   return(sorted_states)
 }
 
-add_bp_coverage <- function(states, state_assignments, bin_size) {
-  bp_coverage <- lapply(states, function(state) {
-    sum(state_assignments == state) * bin_size
+add_bp_coverage <- function(states, state_assignments) {
+  bp_coverage <- lapply(states, function(state_number) {
+    dplyr::filter(state_assignments, state == state_number) |>
+      dplyr::select(size) |>
+      sum()
   })
   stats_table <- data.table::data.table(
     "states" = states,
@@ -97,27 +109,35 @@ create_fold_enrichment_matrix <- function(stats_table) {
   return(fold_enrichment_matrix)
 }
 
-main <- function(combined_assignments_file, bin_size, output_file_path) {
-  combined_assignments <- data.table::fread(
-    combined_assignments_file,
-    col.names = c("model_one", "model_two", "overlap")
-  )
+main <- function(combined_assignments_file,
+                 state_assignments_one_file,
+                 state_assignments_two_file,
+                 bin_size,
+                 output_file_path) {
+  state_assignments_one <- process_state_assignments(state_assignments_one_file)
+  state_assignments_two <- process_state_assignments(state_assignments_two_file)
   model_one_stats_table <-
-    find_states_assigned(combined_assignments[["model_one"]]) |>
-    add_bp_coverage(combined_assignments[["model_one"]], bin_size)
+    find_states_assigned(state_assignments_one[["state"]]) |>
+    add_bp_coverage(state_assignments_one)
   model_two_stats_table <-
-    find_states_assigned(combined_assignments[["model_two"]]) |>
-    add_bp_coverage(combined_assignments[["model_two"]], bin_size)
+    find_states_assigned(state_assignments_two[["state"]]) |>
+    add_bp_coverage(state_assignments_two)
   stats_table <- merge_stats_tables(
     model_one_stats_table,
     model_two_stats_table
   )
 
-  stats_table <- add_bp_overlap(stats_table, combined_assignments)
+  # Both state assignments files should have the same size, so we just use
+  # the first one (overlap can have more rows when there are margins).
+  genome_size <- calculate_genome_size(state_assignments_one, bin_size)
 
-  genome_size <- calculate_genome_size(combined_assignments, bin_size)
-
-  stats_table <- add_fold_enrichment(stats_table, genome_size)
+  combined_assignments <- data.table::fread(
+    combined_assignments_file,
+    col.names = c("model_one", "model_two", "overlap")
+  )
+  stats_table <- stats_table |>
+    add_bp_overlap(combined_assignments) |>
+    add_fold_enrichment(genome_size)
 
   fold_enrichment_matrix <- create_fold_enrichment_matrix(stats_table)
 
@@ -126,8 +146,16 @@ main <- function(combined_assignments_file, bin_size, output_file_path) {
 
 args <- commandArgs(trailingOnly = TRUE)
 combined_assignments_file <- args[[1]]
-bin_size <- as.numeric(args[[2]])
-output_file_path <- args[[3]]
+state_assignments_one_file <- args[[2]]
+state_assignments_two_file <- args[[3]]
+bin_size <- as.numeric(args[[4]])
+output_file_path <- args[[5]]
 
 source("IO.R")
-main(combined_assignments_file, bin_size, output_file_path)
+main(
+  combined_assignments_file,
+  state_assignments_one_file,
+  state_assignments_two_file,
+  bin_size,
+  output_file_path
+)
