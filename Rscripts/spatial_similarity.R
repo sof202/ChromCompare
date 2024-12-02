@@ -127,6 +127,8 @@ main <- function(combined_assignments_file,
     model_two_stats_table
   )
 
+  # Both state assignments files should have the same size, so we just use
+  # the first one (overlap can have more rows when there are margins).
   genome_size <- calculate_genome_size(state_assignments_one, bin_size)
 
   combined_assignments <- data.table::fread(
