@@ -136,15 +136,27 @@ run_spatial_similarity() {
       "${state_assignment_file_one}" \
       "${margin}" \
       "${CHROMOSOME_SIZES_FILE}" \
-      "${PROCESSING_DIRECTORY}/state_assignments_one_margin_${margin}.bed"
+      "${PROCESSING_DIRECTORY}/state_assignments_one_margin_${margin}.bed.temp"
 
     Rscript \
       "${RSCRIPT_DIRECTORY}/add_margins.R" \
       "${state_assignment_file_two}" \
       "${margin}" \
       "${CHROMOSOME_SIZES_FILE}" \
-      "${PROCESSING_DIRECTORY}/state_assignments_two_margin_${margin}.bed"
+      "${PROCESSING_DIRECTORY}/state_assignments_two_margin_${margin}.bed.temp"
     conda deactivate
+
+    # ChromHMM annoyingly puts an E before state numbers in the state
+    # assignment files. This removes them
+    sed 's/E//g' \
+      "${PROCESSING_DIRECTORY}/state_assignments_one_margin_${margin}.bed.temp" > \
+      "${PROCESSING_DIRECTORY}/state_assignments_one_margin_${margin}.bed"
+    sed 's/E//g' \
+      "${PROCESSING_DIRECTORY}/state_assignments_two_margin_${margin}.bed.temp" > \
+      "${PROCESSING_DIRECTORY}/state_assignments_two_margin_${margin}.bed"
+    rm \
+      "${PROCESSING_DIRECTORY}/state_assignments_one_margin_${margin}.bed.temp" \
+      "${PROCESSING_DIRECTORY}/state_assignments_two_margin_${margin}.bed.temp"
 
     conda activate ChromCompare-bedtools
     bedtools intersect \
@@ -152,20 +164,15 @@ run_spatial_similarity() {
       -a "${PROCESSING_DIRECTORY}/state_assignments_one_margin_${margin}.bed" \
       -b "${PROCESSING_DIRECTORY}/state_assignments_two_margin_${margin}.bed" | \
       awk '{OFS="\t"} {print $4,$8,$9}' > \
-      "${PROCESSING_DIRECTORY}/state_assignment_overlap_margin_${margin}.bed.temp"
-    conda deactivate
-
-    # ChromHMM annoyingly puts an E before state numbers in the state
-    # assignment files. This removes them
-    sed 's/E//g' \
-      "${PROCESSING_DIRECTORY}/state_assignment_overlap_margin_${margin}.bed.temp" > \
       "${PROCESSING_DIRECTORY}/state_assignment_overlap_margin_${margin}.bed"
-    rm "${PROCESSING_DIRECTORY}/state_assignment_overlap_margin_${margin}.bed.temp"
+    conda deactivate
 
     conda activate ChromCompare-R
     Rscript \
       "${RSCRIPT_DIRECTORY}/spatial_similarity.R" \
       "${PROCESSING_DIRECTORY}/state_assignment_overlap_margin_${margin}.bed" \
+      "${PROCESSING_DIRECTORY}/state_assignments_one_margin_${margin}.bed" \
+      "${PROCESSING_DIRECTORY}/state_assignments_two_margin_${margin}.bed" \
       "${BIN_SIZE}" \
       "${PROCESSING_DIRECTORY}/${output_file_prefix}${margin}.txt"
     conda deactivate
