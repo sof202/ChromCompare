@@ -6,8 +6,9 @@ align_columns <- function(table_one, table_two) {
   common_marks <- intersect(colnames(table_one), colnames(table_two))
   if (length(colnames(table_two)) != length(colnames(table_one))) {
     message(
-      "Marks between emission files do not align.",
-      "We recommend using a smaller weight for this matrix."
+      "Marks between emission files do not align. Models share ",
+      length(common_marks),
+      " marks. We recommend using a smaller weight for this matrix."
     )
   }
   table_one <- dplyr::select(table_one, dplyr::all_of(common_marks))
