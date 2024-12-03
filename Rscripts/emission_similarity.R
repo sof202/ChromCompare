@@ -2,9 +2,17 @@ remove_state_column <- function(emissions_table) {
   return(dplyr::select(emissions_table, -"State (Emission order)"))
 }
 
-match_columns <- function(table_one, table_two) {
-  table_one_column_order <- colnames(table_one)
-  table_two <- dplyr::select(table_two, dplyr::all_of(table_one_column_order))
+align_columns <- function(table_one, table_two) {
+  common_marks <- intersect(colnames(table_one), colnames(table_two))
+  if (length(colnames(table_two)) != length(colnames(table_one))) {
+    message(
+      "Marks between emission files do not align. Models share ",
+      length(common_marks),
+      " marks. We recommend using a smaller weight for this matrix."
+    )
+  }
+  table_one <- dplyr::select(table_one, common_marks)
+  table_two <- dplyr::select(table_two, common_marks)
   return(list(table_one, table_two))
 }
 
@@ -34,9 +42,9 @@ main <- function(emission_file_one, emission_file_two, output_file) {
   emissions_one <- remove_state_column(emissions_one)
   emissions_two <- remove_state_column(emissions_two)
 
-  matched_emissions <- match_columns(emissions_one, emissions_two)
-  emissions_one <- matched_emissions[[1]]
-  emissions_two <- matched_emissions[[2]]
+  aligned_emissions <- align_columns(emissions_one, emissions_two)
+  emissions_one <- aligned_emissions[[1]]
+  emissions_two <- aligned_emissions[[2]]
 
   emission_distances_matrix <-
     create_distances_matrix(
