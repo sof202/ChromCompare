@@ -11,8 +11,8 @@ align_columns <- function(table_one, table_two) {
       " marks. We recommend using a smaller weight for this matrix."
     )
   }
-  table_one <- dplyr::select(table_one, dplyr::all_of(common_marks))
-  table_two <- dplyr::select(table_two, dplyr::all_of(common_marks))
+  table_one <- dplyr::select(table_one, common_marks)
+  table_two <- dplyr::select(table_two, common_marks)
   return(list(table_one, table_two))
 }
 
