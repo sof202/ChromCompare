@@ -1,4 +1,4 @@
-# Script Explanation
+# Main Script Explanation
 
 The main script found in `.../JobSubmission/` creates a variety of similarity
 metrics for your chosen two ChromHMM models and combines these into a single
