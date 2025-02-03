@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github-production-user-asset-6210df.s3.amazonaws.com/147140110/390801423-6aaf45d5-e5c1-4429-9a4e-4499ea676811.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20241128%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20241128T133141Z&X-Amz-Expires=300&X-Amz-Signature=cb7515a4d53f58594ceb7f5a7b283c9cdb1244fa30e1194050d845bf3d89d775&X-Amz-SignedHeaders=host" />
+  <img src="https://github.com/user-attachments/assets/a45ab18f-2f2c-4690-b3e7-663d78f2821f"/>
 </p>
 
 </p>
