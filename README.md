@@ -55,6 +55,8 @@ An example of running the main script would be:
 sbatch .../ChromCompare.sh .../path/to/configuration_file.txt
 ```
 
+For additional information it is recommended that you read the 
+[documentation](https://sof202.github.io/ChromCompare/).
 
 ## Required Software
 
